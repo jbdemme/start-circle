@@ -1,12 +1,4 @@
-import { MenuIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -19,17 +11,11 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-export type NavigationSection = {
-  title: string;
-  href: string;
-};
-
 type HeaderProps = {
-  navigationData: NavigationSection[];
   className?: string;
 };
 
-const Header = ({ navigationData, className }: HeaderProps) => {
+const Header = ({ className }: HeaderProps) => {
   return (
     <header
       className={cn(
