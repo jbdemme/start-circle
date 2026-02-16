@@ -1,22 +1,11 @@
 import { ComponentExample } from "@/components/component-example";
-import Header, { NavigationSection } from "@/components/header";
+import Header from "@/components/header";
 import HeroSection from "@/components/hero-section";
-
-const navigationData: NavigationSection[] = [
-  {
-    title: "Home",
-    href: "#",
-  },
-  {
-    title: "About Us",
-    href: "#",
-  },
-];
 
 export default function Page() {
   return (
     <div>
-      <Header navigationData={navigationData} />
+      <Header />
 
       <main className="flex flex-col">
         <HeroSection />
