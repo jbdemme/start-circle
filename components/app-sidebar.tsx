@@ -114,21 +114,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarMenuButton
-          size="lg"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-        >
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-            <House />
-          </div>
-          <div className="grid flex-1 text-left text-lg leading-tight">
-            <span className="truncate font-medium">
-              <span className="font-bold">START</span>{" "}
-              <span className="font-light">Circle</span>
-            </span>
-            <span className="truncate text-xs">Dashboard</span>
-          </div>
-        </SidebarMenuButton>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="/dashboard">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <House />
+                </div>
+                <div className="grid flex-1 text-left text-lg leading-tight">
+                  <span className="truncate font-medium">
+                    <span className="font-bold">START</span>{" "}
+                    <span className="font-light">Circle</span>
+                  </span>
+                  <span className="truncate text-xs">Dashboard</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
