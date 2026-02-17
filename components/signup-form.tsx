@@ -15,16 +15,33 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { signUpNewUser } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+import { useActionState } from "react";
 
 interface SignupFormProps extends React.ComponentProps<typeof Card> {
   className?: string;
 }
 
 export function SignupForm({ className, ...props }: SignupFormProps) {
+  const [state, formAction, isPending] = useActionState(signUpNewUser, null);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card {...props}>
+        {/* Display Error Message */}
+        {state?.error && (
+          <div className="p-3 text-sm text-red-500 bg-red-100 border border-red-200 rounded">
+            {state.error}
+          </div>
+        )}
+
+        {/* Display Success Message */}
+        {state?.success && (
+          <div className="p-3 text-sm text-green-500 bg-green-100 border border-green-200 rounded">
+            {state.success}
+          </div>
+        )}
         <CardHeader>
           <CardTitle>Create a talent account</CardTitle>
           <CardDescription>
@@ -32,7 +49,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -83,9 +100,11 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
               </Field>
               <FieldGroup>
                 <Field>
-                  <Button type="submit">Create Account</Button>
+                  <Button type="submit" disabled={isPending}>
+                    Create Account
+                  </Button>
                   <FieldDescription className="px-6 text-center">
-                    Already have an account? <a href="/login">Sign in</a>
+                    Already have an account? <a href="/login">Log in</a>
                   </FieldDescription>
                 </Field>
               </FieldGroup>

@@ -87,7 +87,7 @@ const Header = ({ className }: HeaderProps) => {
             className="rounded-lg max-md:hidden"
             asChild
           >
-            <a href="#">Log In</a>
+            <a href="/login">Log In</a>
           </Button>
           <Button className="rounded-lg max-md:hidden" asChild>
             <a href="/signup/talent">Sign Up</a>
