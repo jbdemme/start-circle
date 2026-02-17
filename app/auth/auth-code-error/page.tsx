@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function AuthError() {
   return (
     <div className="h-full w-full flex  flex-col justify-center items-center text-center p-4 md:p-10">
-      <h1 className="text-3xl md: text-4xl">Auth Error</h1>
+      <h1 className="text-3xl md:text-4xl">Auth Error</h1>
       <br />
       <p>
         Seems like there was an error with our the authentication of your

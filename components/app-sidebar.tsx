@@ -9,7 +9,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
@@ -21,6 +23,7 @@ import {
   Send,
 } from "lucide-react";
 import { NavSecondary } from "./nav-secondary";
+import Link from "next/link";
 
 // This is sample data.
 const data = {
@@ -42,7 +45,7 @@ const data = {
         },
         {
           title: "Job Postings",
-          url: "#",
+          url: "/dashboard/jobs",
         },
         {
           title: "Applications",
@@ -87,7 +90,7 @@ const data = {
           url: "#",
         },
         {
-          title: "General",
+          title: "Other",
           url: "#",
         },
       ],
@@ -101,7 +104,7 @@ const data = {
     },
     {
       title: "Feedback",
-      url: "#",
+      url: "mailto:circle@start-vienna.com?subject=START+Circle+Feedback",
       icon: Send,
     },
   ],
