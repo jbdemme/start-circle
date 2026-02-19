@@ -1,6 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "./supabase/server";
+import { type JobFormData } from "./types/job";
 
 export type ActionState = {
   success?: string;
@@ -135,6 +137,33 @@ export async function signOutAction() {
   await supabase.auth.signOut();
 }
 
+export async function createJob(
+  startupId: string,
+  data: JobFormData,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("jobs").insert({
+    startup_id: startupId,
+    title: data.title,
+    description: data.description,
+    location: data.location,
+    department: data.department,
+    job_type: data.jobType,
+    status: "draft",
+  });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/dashboard/jobs");
+  return { success: true };
+}
+
+/**
+ * @deprecated Use createJob instead
+ */
 export async function newJob(user_id: string, formData: FormData) {
   const { title, description, location } = {
     title: formData.get("title")?.toString(),

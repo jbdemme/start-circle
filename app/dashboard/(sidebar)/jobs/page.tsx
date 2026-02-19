@@ -46,7 +46,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { newJob } from "@/lib/actions";
 import { getMyProfile } from "@/lib/data/user";
 import { use } from "react";
-import { JobListing, JobListingsTable } from "@/components/job-listings-table";
+import { JobListingsTable } from "@/components/job-listings-table";
+import { type JobListing, DEPARTMENT, JOB_TYPE } from "@/lib/types/job";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 async function Page(props: {
   searchParams?: Promise<{
@@ -159,8 +162,8 @@ async function getData(): Promise<Job[]> {
     {
       id: "asd7dfh",
       title: "Senior ML Engineer",
-      department: "Tech",
-      level: "Senior",
+      department: DEPARTMENT.TECH,
+      jobType: JOB_TYPE.FULL_TIME,
       location: "remote",
       status: "active",
       posted: new Date("2025-02-10"),
@@ -168,8 +171,8 @@ async function getData(): Promise<Job[]> {
     {
       id: "asd7dfh",
       title: "Junior AI Engineer",
-      department: "Tech",
-      level: "Junior",
+      department: DEPARTMENT.TECH,
+      jobType: JOB_TYPE.FULL_TIME,
       location: "Vienna",
       status: "draft",
       posted: new Date("2026-02-12"),
@@ -177,8 +180,8 @@ async function getData(): Promise<Job[]> {
     {
       id: "asd7dfh",
       title: "Founders Associate",
-      department: "Operations",
-      level: "Internship",
+      department: DEPARTMENT.OPERATIONS,
+      jobType: JOB_TYPE.INTERNSHIP,
       location: "Munich",
       status: "paused",
       posted: new Date("2026-02-18"),
@@ -186,8 +189,8 @@ async function getData(): Promise<Job[]> {
     {
       id: "asd7dfh",
       title: "GTM Intern",
-      department: "GTM",
-      level: "Internship",
+      department: DEPARTMENT.SALES_GTM,
+      jobType: JOB_TYPE.INTERNSHIP,
       location: "Vienna",
       status: "expired",
       posted: new Date("2026-01-01"),
@@ -276,8 +279,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "We are looking for an experienced frontend developer to join our team and help build amazing user experiences.",
     location: "Berlin, Germany",
-    department: "Tech",
-    jobType: "Full-time",
+    department: DEPARTMENT.TECH,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "active",
   },
   {
@@ -286,8 +289,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Join our marketing team to drive product awareness and go-to-market strategies.",
     location: "Remote",
-    department: "GTM",
-    jobType: "Full-time",
+    department: DEPARTMENT.SALES_GTM,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "active",
   },
   {
@@ -296,8 +299,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Build and maintain scalable backend services for our growing platform.",
     location: "Munich, Germany",
-    department: "Tech",
-    jobType: "Full-time",
+    department: DEPARTMENT.TECH,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "paused",
   },
   {
@@ -306,8 +309,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Great opportunity for students to gain hands-on experience in operations management.",
     location: "Hamburg, Germany",
-    department: "Operations",
-    jobType: "Internship",
+    department: DEPARTMENT.OPERATIONS,
+    jobType: JOB_TYPE.INTERNSHIP,
     status: "draft",
   },
   {
@@ -316,8 +319,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Manage and improve our CI/CD pipelines and cloud infrastructure.",
     location: "Frankfurt, Germany",
-    department: "Tech",
-    jobType: "Full-time",
+    department: DEPARTMENT.TECH,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "expired",
   },
   {
@@ -326,8 +329,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Drive outbound sales efforts and qualify leads for the sales team.",
     location: "Remote",
-    department: "GTM",
-    jobType: "Full-time",
+    department: DEPARTMENT.SALES_GTM,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "active",
   },
   {
@@ -336,8 +339,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Support the HR team with recruiting, onboarding, and employee engagement initiatives.",
     location: "Berlin, Germany",
-    department: "Operations",
-    jobType: "Part-time / Working Student",
+    department: DEPARTMENT.OPERATIONS,
+    jobType: JOB_TYPE.PART_TIME_WORKING_STUDENT,
     status: "active",
   },
   {
@@ -346,8 +349,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Analyze business data and provide insights to support decision-making.",
     location: "Cologne, Germany",
-    department: "Other",
-    jobType: "Full-time",
+    department: DEPARTMENT.OTHER,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "paused",
   },
   {
@@ -356,8 +359,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Design intuitive and beautiful user interfaces for our web and mobile applications.",
     location: "Remote",
-    department: "Tech",
-    jobType: "Full-time",
+    department: DEPARTMENT.TECH,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "draft",
   },
   {
@@ -366,13 +369,15 @@ const sampleJobListings: JobListing[] = [
     description:
       "Ensure customer satisfaction and drive retention through excellent support.",
     location: "Munich, Germany",
-    department: "GTM",
-    jobType: "Full-time",
+    department: DEPARTMENT.SALES_GTM,
+    jobType: JOB_TYPE.FULL_TIME,
     status: "expired",
   },
 ];
 
 export default function JobListingsPage() {
+  const router = useRouter();
+
   const handleEdit = (id: string) => {
     console.log("Edit job:", id);
     alert(`Edit job with ID: ${id}`);
@@ -383,11 +388,16 @@ export default function JobListingsPage() {
     alert(`Delete job with ID: ${id}`);
   };
 
+  const handleCreate = () => {
+    console.log("Create new job");
+    router.push("/dashboard/jobs/new");
+  };
+
   return (
     <div className="container mx-auto p-10">
       <div className="flex items-center justify-between">
         <h1 className="mb-6 text-2xl font-bold">Job Listings Table</h1>
-        <Button size="sm">
+        <Button size="sm" onClick={handleCreate}>
           <Plus className="h-4 w-4" />
           Add New Job
         </Button>

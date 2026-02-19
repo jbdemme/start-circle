@@ -26,26 +26,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  type JobListing,
+  type JobStatus,
+  JOB_STATUS_LABELS,
+  DEPARTMENT_LABELS,
+  JOB_TYPE_LABELS,
+} from "@/lib/types/job";
 
-// Type definitions based on newJobSchema + status
-export type JobStatus = "draft" | "active" | "paused" | "expired";
-
-export type Department = "Tech" | "GTM" | "Operations" | "Other";
-
-export type JobType =
-  | "Full-time"
-  | "Internship"
-  | "Part-time / Working Student";
-
-export interface JobListing {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  department: Department;
-  jobType: JobType;
-  status: JobStatus;
-}
+// Re-export types for backward compatibility
+export type { JobListing, JobStatus } from "@/lib/types/job";
+export type { Department, JobType } from "@/lib/types/job";
 
 interface JobListingsTableProps {
   data: JobListing[];
@@ -62,14 +53,6 @@ const statusVariants: Record<
   active: "default",
   paused: "outline",
   expired: "destructive",
-};
-
-// Status display labels
-const statusLabels: Record<JobStatus, string> = {
-  draft: "Draft",
-  active: "Active",
-  paused: "Paused",
-  expired: "Expired",
 };
 
 export function JobListingsTable({
@@ -96,10 +79,11 @@ export function JobListingsTable({
           </SelectTrigger>
           <SelectContent position="popper">
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="paused">Paused</SelectItem>
-            <SelectItem value="expired">Expired</SelectItem>
+            {Object.entries(JOB_STATUS_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -122,12 +106,16 @@ export function JobListingsTable({
               filteredData.map((job) => (
                 <TableRow key={job.id}>
                   <TableCell className="font-medium">{job.title}</TableCell>
-                  <TableCell>{job.department}</TableCell>
+                  <TableCell>
+                    {DEPARTMENT_LABELS[job.department] || job.department}
+                  </TableCell>
                   <TableCell>{job.location}</TableCell>
-                  <TableCell>{job.jobType}</TableCell>
+                  <TableCell>
+                    {JOB_TYPE_LABELS[job.jobType] || job.jobType}
+                  </TableCell>
                   <TableCell>
                     <Badge variant={statusVariants[job.status]}>
-                      {statusLabels[job.status]}
+                      {JOB_STATUS_LABELS[job.status]}
                     </Badge>
                   </TableCell>
                   <TableCell>

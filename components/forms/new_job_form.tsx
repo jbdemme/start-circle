@@ -2,17 +2,18 @@
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { newJobSchema } from "@/lib/schema";
+import {
+  DEPARTMENT_LABELS,
+  JOB_TYPE_LABELS,
+  type JobFormData,
+} from "@/lib/types/job";
 
 import {
   Field,
-  FieldContent,
   FieldDescription,
   FieldError,
-  FieldGroup,
   FieldLabel,
-  FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -26,8 +27,8 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-export function NewBlogForm() {
-  const form = useForm<z.infer<typeof newJobSchema>>({
+export function NewJobForm() {
+  const form = useForm<JobFormData>({
     resolver: zodResolver(newJobSchema),
     defaultValues: {
       title: "",
@@ -39,7 +40,7 @@ export function NewBlogForm() {
     mode: "onBlur",
   });
 
-  function onSubmit(data: z.infer<typeof newJobSchema>) {
+  function onSubmit(data: JobFormData) {
     // Do something with the form values.
     console.log(data);
   }
@@ -115,12 +116,13 @@ export function NewBlogForm() {
                         <SelectValue placeholder="Select job type" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="full-time">Full-time</SelectItem>
-                        <SelectItem value="internship">Internship</SelectItem>
-                        <SelectItem value="part-time">Part-time</SelectItem>
-                        <SelectItem value="working student">
-                          Working student
-                        </SelectItem>
+                        {Object.entries(JOB_TYPE_LABELS).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (
@@ -146,10 +148,13 @@ export function NewBlogForm() {
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="Tech">Tech</SelectItem>
-                        <SelectItem value="GTM">GTM</SelectItem>
-                        <SelectItem value="operations">Operations</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        {Object.entries(DEPARTMENT_LABELS).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (

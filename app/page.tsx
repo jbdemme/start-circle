@@ -10,7 +10,7 @@ export default function Page() {
         <HeroSection />
       </main>
       <div className="fixed inset-0 -z-10 flex items-center justify-center overflow-hidden">
-        <div className="w-160 h-160 bg-transparent border-2 border-cyan-400 rounded-full shadow-[0_0_300px_rgba(34,211,238,0.8)] animate-pulse"></div>
+        <div className="w-[90vmin] h-[90vmin] bg-transparent border-2 border-cyan-400 rounded-full shadow-[0_0_300px_rgba(34,211,238,0.8)] animate-pulse"></div>
       </div>
     </div>
   );

@@ -17,16 +17,24 @@ import {
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
+import {
+  type Department,
+  type JobType,
+  type JobStatus,
+  DEPARTMENT_LABELS,
+  JOB_TYPE_LABELS,
+  JOB_STATUS_LABELS,
+} from "@/lib/types/job";
 
-// type to define the shape of a job
-// We could use a Zod type here.
+// Type for the jobs table display
+// Uses unified types from lib/types/job.ts
 export type Job = {
   id: string;
   title: string;
-  department: "GTM" | "Tech" | "Operations" | "Other";
-  level: "Internship" | "Working student" | "Junior" | "Senior";
+  department: Department;
+  jobType: JobType;
   location: string;
-  status: "draft" | "active" | "paused" | "expired";
+  status: JobStatus;
   posted: Date;
 };
 
@@ -38,14 +46,37 @@ export const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "department",
     header: "Department",
+    cell: ({ row }) => {
+      const department = row.getValue("department") as Department;
+      return DEPARTMENT_LABELS[department] || department;
+    },
   },
   {
-    accessorKey: "level",
-    header: "Level",
+    accessorKey: "jobType",
+    header: "Job Type",
+    cell: ({ row }) => {
+      const jobType = row.getValue("jobType") as JobType;
+      return JOB_TYPE_LABELS[jobType] || jobType;
+    },
   },
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as JobStatus;
+      const variantMap: Record<
+        JobStatus,
+        "secondary" | "default" | "outline" | "destructive"
+      > = {
+        draft: "secondary",
+        active: "default",
+        paused: "outline",
+        expired: "destructive",
+      };
+      return (
+        <Badge variant={variantMap[status]}>{JOB_STATUS_LABELS[status]}</Badge>
+      );
+    },
   },
   {
     accessorKey: "posted",
