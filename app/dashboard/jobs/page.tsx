@@ -1,3 +1,5 @@
+"use client";
+
 import SearchInput from "@/components/search-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,6 +45,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { newJob } from "@/lib/actions";
 import { getMyProfile } from "@/lib/data/user";
+import { use } from "react";
+import { JobListing, JobListingsTable } from "@/components/job-listings-table";
 
 async function Page(props: {
   searchParams?: Promise<{
@@ -191,75 +195,208 @@ async function getData(): Promise<Job[]> {
   ];
 }
 
-export default async function DemoPage() {
-  const data = await getData();
+// export default async function DemoPage() {
+//   const data = await getData();
 
-  const profile = await getMyProfile();
+//   const profile = await getMyProfile();
 
-  const newJobWithUser = newJob.bind(null, profile.id);
+//   const newJobWithUser = newJob.bind(null, profile.id);
+
+//   return (
+//     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+//       <Card className="">
+//         <CardHeader>
+//           <CardTitle className="text-2xl md:text-4xl">Job Postings</CardTitle>
+//           <CardDescription>
+//             A list of all your job postings. You can view, sort, edit and delete
+//             them.
+//           </CardDescription>
+//           <Dialog>
+//             <DialogTrigger asChild>
+//               <Button>Add a new job</Button>
+//             </DialogTrigger>
+//             <DialogContent className="sm:max-w-sm">
+//               <form action={newJobWithUser}>
+//                 <DialogHeader>
+//                   <DialogTitle>Add Job Listing</DialogTitle>
+//                   <DialogDescription>
+//                     Add a new job listing. Click save when you are done.
+//                   </DialogDescription>
+//                 </DialogHeader>
+//                 <FieldGroup>
+//                   <Field>
+//                     <Label htmlFor="job-title">Job Title</Label>
+//                     <Input
+//                       id="job-title"
+//                       name="title"
+//                       placeholder="Founders Associate"
+//                     />
+//                   </Field>
+//                   <Field>
+//                     <Label htmlFor="description">Description</Label>
+//                     <Textarea
+//                       id="description"
+//                       name="description"
+//                       placeholder="Add description..."
+//                       className="md:h-40"
+//                     />
+//                   </Field>
+//                   <Field>
+//                     <Label htmlFor="location">Location</Label>
+//                     <Input
+//                       id="location"
+//                       name="location"
+//                       placeholder="eg. Vienna, Remote, Hybrid (Vienna)"
+//                     />
+//                   </Field>
+//                 </FieldGroup>
+//                 <DialogFooter>
+//                   <DialogClose asChild>
+//                     <Button variant="outline">Cancel</Button>
+//                   </DialogClose>
+//                   <Button type="submit">Save</Button>
+//                 </DialogFooter>
+//               </form>
+//             </DialogContent>
+//           </Dialog>
+//         </CardHeader>
+//         <CardContent>
+//           <DataTable columns={columns} data={data} />
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// }
+
+// Sample data for testing JobListingsTable
+const sampleJobListings: JobListing[] = [
+  {
+    id: "1",
+    title: "Senior Frontend Developer",
+    description:
+      "We are looking for an experienced frontend developer to join our team and help build amazing user experiences.",
+    location: "Berlin, Germany",
+    department: "Tech",
+    jobType: "Full-time",
+    status: "active",
+  },
+  {
+    id: "2",
+    title: "Product Marketing Manager",
+    description:
+      "Join our marketing team to drive product awareness and go-to-market strategies.",
+    location: "Remote",
+    department: "GTM",
+    jobType: "Full-time",
+    status: "active",
+  },
+  {
+    id: "3",
+    title: "Backend Engineer",
+    description:
+      "Build and maintain scalable backend services for our growing platform.",
+    location: "Munich, Germany",
+    department: "Tech",
+    jobType: "Full-time",
+    status: "paused",
+  },
+  {
+    id: "4",
+    title: "Operations Intern",
+    description:
+      "Great opportunity for students to gain hands-on experience in operations management.",
+    location: "Hamburg, Germany",
+    department: "Operations",
+    jobType: "Internship",
+    status: "draft",
+  },
+  {
+    id: "5",
+    title: "DevOps Engineer",
+    description:
+      "Manage and improve our CI/CD pipelines and cloud infrastructure.",
+    location: "Frankfurt, Germany",
+    department: "Tech",
+    jobType: "Full-time",
+    status: "expired",
+  },
+  {
+    id: "6",
+    title: "Sales Development Representative",
+    description:
+      "Drive outbound sales efforts and qualify leads for the sales team.",
+    location: "Remote",
+    department: "GTM",
+    jobType: "Full-time",
+    status: "active",
+  },
+  {
+    id: "7",
+    title: "Working Student - HR",
+    description:
+      "Support the HR team with recruiting, onboarding, and employee engagement initiatives.",
+    location: "Berlin, Germany",
+    department: "Operations",
+    jobType: "Part-time / Working Student",
+    status: "active",
+  },
+  {
+    id: "8",
+    title: "Data Analyst",
+    description:
+      "Analyze business data and provide insights to support decision-making.",
+    location: "Cologne, Germany",
+    department: "Other",
+    jobType: "Full-time",
+    status: "paused",
+  },
+  {
+    id: "9",
+    title: "UX Designer",
+    description:
+      "Design intuitive and beautiful user interfaces for our web and mobile applications.",
+    location: "Remote",
+    department: "Tech",
+    jobType: "Full-time",
+    status: "draft",
+  },
+  {
+    id: "10",
+    title: "Customer Success Manager",
+    description:
+      "Ensure customer satisfaction and drive retention through excellent support.",
+    location: "Munich, Germany",
+    department: "GTM",
+    jobType: "Full-time",
+    status: "expired",
+  },
+];
+
+export default function JobListingsPage() {
+  const handleEdit = (id: string) => {
+    console.log("Edit job:", id);
+    alert(`Edit job with ID: ${id}`);
+  };
+
+  const handleDelete = (id: string) => {
+    console.log("Delete job:", id);
+    alert(`Delete job with ID: ${id}`);
+  };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <Card className="">
-        <CardHeader>
-          <CardTitle className="text-2xl md:text-4xl">Job Postings</CardTitle>
-          <CardDescription>
-            A list of all your job postings. You can view, sort, edit and delete
-            them.
-          </CardDescription>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Add a new job</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-sm">
-              <form action={newJobWithUser}>
-                <DialogHeader>
-                  <DialogTitle>Add Job Listing</DialogTitle>
-                  <DialogDescription>
-                    Add a new job listing. Click save when you are done.
-                  </DialogDescription>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="job-title">Job Title</Label>
-                    <Input
-                      id="job-title"
-                      name="title"
-                      placeholder="Founders Associate"
-                    />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      placeholder="Add description..."
-                      className="md:h-40"
-                    />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="location">Location</Label>
-                    <Input
-                      id="location"
-                      name="location"
-                      placeholder="eg. Vienna, Remote, Hybrid (Vienna)"
-                    />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Save</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={data} />
-        </CardContent>
-      </Card>
+    <div className="container mx-auto p-10">
+      <div className="flex items-center justify-between">
+        <h1 className="mb-6 text-2xl font-bold">Job Listings Table</h1>
+        <Button size="sm">
+          <Plus className="h-4 w-4" />
+          Add New Job
+        </Button>
+      </div>
+      <JobListingsTable
+        data={sampleJobListings}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
