@@ -46,17 +46,6 @@ export const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status");
-      const statusMap = {
-        active: "default",
-        paused: "secondary",
-        draft: "outline",
-        expired: "destructive",
-      };
-      const variant = statusMap[status] || "secondary";
-      return <Badge variant={variant}>{status}</Badge>;
-    },
   },
   {
     accessorKey: "posted",
