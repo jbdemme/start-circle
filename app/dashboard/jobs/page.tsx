@@ -25,7 +25,26 @@ import {
 } from "@/components/ui/select";
 import { Funnel, Plus } from "lucide-react";
 
-export default async function Page(props: {
+import { columns, Job } from "./columns";
+import { DataTable } from "./data-table";
+import { DataTable1 } from "@/components/data-table1";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { newJob } from "@/lib/actions";
+import { getMyProfile } from "@/lib/data/user";
+
+async function Page(props: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
@@ -123,6 +142,122 @@ export default async function Page(props: {
       <Card>
         <CardContent>
           <div>Hello these are the job listings fitting to the search.</div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+async function getData(): Promise<Job[]> {
+  // Fetch data from API here
+  // FOR NOW MOCK DATA
+  return [
+    {
+      id: "asd7dfh",
+      title: "Senior ML Engineer",
+      department: "Tech",
+      level: "Senior",
+      location: "remote",
+      status: "active",
+      posted: new Date("2025-02-10"),
+    },
+    {
+      id: "asd7dfh",
+      title: "Junior AI Engineer",
+      department: "Tech",
+      level: "Junior",
+      location: "Vienna",
+      status: "draft",
+      posted: new Date("2026-02-12"),
+    },
+    {
+      id: "asd7dfh",
+      title: "Founders Associate",
+      department: "Operations",
+      level: "Internship",
+      location: "Munich",
+      status: "paused",
+      posted: new Date("2026-02-18"),
+    },
+    {
+      id: "asd7dfh",
+      title: "GTM Intern",
+      department: "GTM",
+      level: "Internship",
+      location: "Vienna",
+      status: "expired",
+      posted: new Date("2026-01-01"),
+    },
+  ];
+}
+
+export default async function DemoPage() {
+  const data = await getData();
+
+  const profile = await getMyProfile();
+
+  const newJobWithUser = newJob.bind(null, profile.id);
+
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <Card className="">
+        <CardHeader>
+          <CardTitle className="text-2xl md:text-4xl">Job Postings</CardTitle>
+          <CardDescription>
+            A list of all your job postings. You can view, sort, edit and delete
+            them.
+          </CardDescription>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Add a new job</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+              <form action={newJobWithUser}>
+                <DialogHeader>
+                  <DialogTitle>Add Job Listing</DialogTitle>
+                  <DialogDescription>
+                    Add a new job listing. Click save when you are done.
+                  </DialogDescription>
+                </DialogHeader>
+                <FieldGroup>
+                  <Field>
+                    <Label htmlFor="job-title">Job Title</Label>
+                    <Input
+                      id="job-title"
+                      name="title"
+                      placeholder="Founders Associate"
+                    />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      placeholder="Add description..."
+                      className="md:h-40"
+                    />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      name="location"
+                      placeholder="eg. Vienna, Remote, Hybrid (Vienna)"
+                    />
+                  </Field>
+                </FieldGroup>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Save</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </CardHeader>
+        <CardContent>
+          <DataTable columns={columns} data={data} />
         </CardContent>
       </Card>
     </div>
