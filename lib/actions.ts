@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "./supabase/server";
 import { type JobFormData } from "./types/job";
+import { dataTagErrorSymbol } from "@tanstack/react-query";
 
 export type ActionState = {
   success?: string;
@@ -157,6 +158,28 @@ export async function createJob(
     return { success: false, error: error.message };
   }
 
+  revalidatePath("/dashboard/jobs");
+  return { success: true };
+}
+
+export async function publishJob(
+  jobId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({ status: "active" })
+    .eq("id", jobId)
+    .select();
+
+  if (error || !data || data.length === 0) {
+    console.log("ERROR:");
+    console.log(error);
+    return { success: false, error: error?.message || "Job not found" };
+  }
+
+  console.log("NO ERROR!");
   revalidatePath("/dashboard/jobs");
   return { success: true };
 }

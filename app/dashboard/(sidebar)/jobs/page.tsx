@@ -25,42 +25,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Funnel, Plus } from "lucide-react";
+import { Funnel, Plus, Loader2 } from "lucide-react";
 
 import { columns, Job } from "./columns";
-import { DataTable } from "./data-table";
-import { DataTable1 } from "@/components/data-table1";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { newJob } from "@/lib/actions";
-import { getMyProfile } from "@/lib/data/user";
-import { use } from "react";
 import { JobListingsTable } from "@/components/job-listings-table";
 import { type JobListing, DEPARTMENT, JOB_TYPE } from "@/lib/types/job";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useJobListings, useInvalidateJobs } from "@/hooks/use-jobs";
+import { publishJob } from "@/lib/actions";
+import { toast } from "sonner";
 
-async function Page(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || "";
-  const currentPage = searchParams?.page || 1;
-
+async function Page() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <Card>
@@ -271,112 +246,10 @@ async function getData(): Promise<Job[]> {
 //   );
 // }
 
-// Sample data for testing JobListingsTable
-const sampleJobListings: JobListing[] = [
-  {
-    id: "1",
-    title: "Senior Frontend Developer",
-    description:
-      "We are looking for an experienced frontend developer to join our team and help build amazing user experiences.",
-    location: "Berlin, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "active",
-  },
-  {
-    id: "2",
-    title: "Product Marketing Manager",
-    description:
-      "Join our marketing team to drive product awareness and go-to-market strategies.",
-    location: "Remote",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "active",
-  },
-  {
-    id: "3",
-    title: "Backend Engineer",
-    description:
-      "Build and maintain scalable backend services for our growing platform.",
-    location: "Munich, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "paused",
-  },
-  {
-    id: "4",
-    title: "Operations Intern",
-    description:
-      "Great opportunity for students to gain hands-on experience in operations management.",
-    location: "Hamburg, Germany",
-    department: DEPARTMENT.OPERATIONS,
-    jobType: JOB_TYPE.INTERNSHIP,
-    status: "draft",
-  },
-  {
-    id: "5",
-    title: "DevOps Engineer",
-    description:
-      "Manage and improve our CI/CD pipelines and cloud infrastructure.",
-    location: "Frankfurt, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "expired",
-  },
-  {
-    id: "6",
-    title: "Sales Development Representative",
-    description:
-      "Drive outbound sales efforts and qualify leads for the sales team.",
-    location: "Remote",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "active",
-  },
-  {
-    id: "7",
-    title: "Working Student - HR",
-    description:
-      "Support the HR team with recruiting, onboarding, and employee engagement initiatives.",
-    location: "Berlin, Germany",
-    department: DEPARTMENT.OPERATIONS,
-    jobType: JOB_TYPE.PART_TIME_WORKING_STUDENT,
-    status: "active",
-  },
-  {
-    id: "8",
-    title: "Data Analyst",
-    description:
-      "Analyze business data and provide insights to support decision-making.",
-    location: "Cologne, Germany",
-    department: DEPARTMENT.OTHER,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "paused",
-  },
-  {
-    id: "9",
-    title: "UX Designer",
-    description:
-      "Design intuitive and beautiful user interfaces for our web and mobile applications.",
-    location: "Remote",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "draft",
-  },
-  {
-    id: "10",
-    title: "Customer Success Manager",
-    description:
-      "Ensure customer satisfaction and drive retention through excellent support.",
-    location: "Munich, Germany",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
-    status: "expired",
-  },
-];
-
 export default function JobListingsPage() {
   const router = useRouter();
+  const { data: jobListings, isLoading, error } = useJobListings();
+  const invalidateJobs = useInvalidateJobs();
 
   const handleEdit = (id: string) => {
     console.log("Edit job:", id);
@@ -393,17 +266,99 @@ export default function JobListingsPage() {
     router.push("/dashboard/jobs/new");
   };
 
+  const handlePublish = (id: string) => {
+    toast.promise(publishJob(id), {
+      loading: "Publishing job...",
+      success: (result) => {
+        if (result.success) {
+          invalidateJobs();
+          return "Job published successfully";
+        }
+        throw new Error(result.error || "Failed to publish job");
+      },
+      error: (err) => err.message || "Failed to publish job",
+    });
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-10">
+        <div className="flex items-center justify-between">
+          <h1 className="mb-6 text-2xl font-bold">Job Listings</h1>
+          <Button size="sm" onSelect={handleCreate}>
+            <Plus className="h-4 w-4" />
+            Add New Job
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading jobs...</span>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto p-10">
+        <div className="flex items-center justify-between">
+          <h1 className="mb-6 text-2xl font-bold">Job Listings</h1>
+          <Button size="sm" onSelect={handleCreate}>
+            <Plus className="h-4 w-4" />
+            Add New Job
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <p className="text-destructive">Failed to load jobs</p>
+            <p className="text-sm text-muted-foreground">
+              {error instanceof Error ? error.message : "Unknown error"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (!jobListings || jobListings.length === 0) {
+    return (
+      <div className="container mx-auto p-10">
+        <div className="flex items-center justify-between">
+          <h1 className="mb-6 text-2xl font-bold">Job Listings</h1>
+          <Button size="sm" onSelect={handleCreate}>
+            <Plus className="h-4 w-4" />
+            Add New Job
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <p className="text-muted-foreground">No jobs found</p>
+            <p className="text-sm text-muted-foreground">
+              Create your first job listing to get started.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-10">
       <div className="flex items-center justify-between">
-        <h1 className="mb-6 text-2xl font-bold">Job Listings Table</h1>
-        <Button size="sm" onClick={handleCreate}>
+        <h1 className="mb-6 text-2xl font-bold">Job Listings</h1>
+        <Button size="sm" onSelect={handleCreate}>
           <Plus className="h-4 w-4" />
           Add New Job
         </Button>
       </div>
       <JobListingsTable
-        data={sampleJobListings}
+        data={jobListings}
+        onPublish={handlePublish}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />

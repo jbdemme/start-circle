@@ -85,7 +85,7 @@ export const columns: ColumnDef<Job>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(currentSortDirection === "asc")}
+          onSelect={() => column.toggleSorting(currentSortDirection === "asc")}
         >
           Date
           {currentSortDirection === "asc" ? (
@@ -128,7 +128,7 @@ export const columns: ColumnDef<Job>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"
-              onClick={() => remove(job.id)}
+              onSelect={() => remove(job.id)}
             >
               <Trash2 />
               Delete

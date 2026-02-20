@@ -16,6 +16,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -25,13 +26,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Rocket, Trash2 } from "lucide-react";
 import {
   type JobListing,
   type JobStatus,
   JOB_STATUS_LABELS,
-  DEPARTMENT_LABELS,
-  JOB_TYPE_LABELS,
+  getDepartmentLabel,
+  getJobTypeLabel,
+  getJobStatusLabel,
 } from "@/lib/types/job";
 
 // Re-export types for backward compatibility
@@ -40,6 +42,7 @@ export type { Department, JobType } from "@/lib/types/job";
 
 interface JobListingsTableProps {
   data: JobListing[];
+  onPublish?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
@@ -57,6 +60,7 @@ const statusVariants: Record<
 
 export function JobListingsTable({
   data,
+  onPublish,
   onEdit,
   onDelete,
 }: JobListingsTableProps) {
@@ -106,16 +110,12 @@ export function JobListingsTable({
               filteredData.map((job) => (
                 <TableRow key={job.id}>
                   <TableCell className="font-medium">{job.title}</TableCell>
-                  <TableCell>
-                    {DEPARTMENT_LABELS[job.department] || job.department}
-                  </TableCell>
+                  <TableCell>{getDepartmentLabel(job.department)}</TableCell>
                   <TableCell>{job.location}</TableCell>
-                  <TableCell>
-                    {JOB_TYPE_LABELS[job.jobType] || job.jobType}
-                  </TableCell>
+                  <TableCell>{getJobTypeLabel(job.jobType)}</TableCell>
                   <TableCell>
                     <Badge variant={statusVariants[job.status]}>
-                      {JOB_STATUS_LABELS[job.status]}
+                      {getJobStatusLabel(job.status)}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -128,13 +128,23 @@ export function JobListingsTable({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onEdit?.(job.id)}>
+                        <DropdownMenuItem
+                          onSelect={() => {
+                            onPublish?.(job.id);
+                          }}
+                          disabled={job.status !== "draft"}
+                        >
+                          <Rocket className="mr-2 h-4 w-4" />
+                          Publish
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => onEdit?.(job.id)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           variant="destructive"
-                          onClick={() => onDelete?.(job.id)}
+                          onSelect={() => onDelete?.(job.id)}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete

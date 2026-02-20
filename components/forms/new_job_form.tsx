@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newJobSchema } from "@/lib/schema";
@@ -8,6 +10,8 @@ import {
   JOB_TYPE_LABELS,
   type JobFormData,
 } from "@/lib/types/job";
+import { createJob } from "@/lib/actions";
+import { toast } from "sonner";
 
 import {
   Field,
@@ -27,7 +31,14 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-export function NewJobForm() {
+interface NewJobFormProps {
+  startupId: string;
+}
+
+export function NewJobForm({ startupId }: NewJobFormProps) {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<JobFormData>({
     resolver: zodResolver(newJobSchema),
     defaultValues: {
@@ -40,9 +51,18 @@ export function NewJobForm() {
     mode: "onBlur",
   });
 
-  function onSubmit(data: JobFormData) {
-    // Do something with the form values.
-    console.log(data);
+  async function onSubmit(data: JobFormData) {
+    setIsSubmitting(true);
+
+    const result = await createJob(startupId, data);
+
+    if (result.success) {
+      toast.success("Job created successfully");
+      router.back();
+    } else {
+      toast.error(result.error || "Failed to create job");
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -211,11 +231,20 @@ export function NewJobForm() {
       </div>
       <Separator className="my-8" />
       <div className="flex items-center justify-end space-x-4">
-        <Button type="button" variant="outline" className="whitespace-nowrap">
+        <Button
+          type="button"
+          variant="outline"
+          className="whitespace-nowrap"
+          onSelect={() => router.back()}
+        >
           Go back
         </Button>
-        <Button type="submit" className="whitespace-nowrap">
-          Save as draft
+        <Button
+          type="submit"
+          className="whitespace-nowrap"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Saving..." : "Save as draft"}
         </Button>
       </div>
     </form>

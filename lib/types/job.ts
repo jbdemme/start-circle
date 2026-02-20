@@ -83,8 +83,8 @@ export interface JobFormData {
   title: string;
   description: string;
   location: string;
-  department: Department;
-  jobType: JobType;
+  department: Department | null;
+  jobType: JobType | null;
 }
 
 // Display type for job listings
@@ -93,8 +93,8 @@ export interface JobListing {
   title: string;
   description: string;
   location: string;
-  department: Department;
-  jobType: JobType;
+  department: Department | null;
+  jobType: JobType | null;
   status: JobStatus;
   createdAt?: Date;
   applicationsCount?: number;
@@ -102,14 +102,14 @@ export interface JobListing {
 
 // --- HELPER FUNCTIONS ---
 
-export function getDepartmentLabel(department: Department): string {
-  return DEPARTMENT_LABELS[department];
+export function getDepartmentLabel(department: Department | null): string {
+  return department ? (DEPARTMENT_LABELS[department] ?? department) : "—";
 }
 
-export function getJobTypeLabel(jobType: JobType): string {
-  return JOB_TYPE_LABELS[jobType];
+export function getJobTypeLabel(jobType: JobType | null): string {
+  return jobType ? (JOB_TYPE_LABELS[jobType] ?? jobType) : "—";
 }
 
-export function getJobStatusLabel(status: JobStatus): string {
-  return JOB_STATUS_LABELS[status];
+export function getJobStatusLabel(status: JobStatus | null): string {
+  return status ? (JOB_STATUS_LABELS[status] ?? status) : "—";
 }
