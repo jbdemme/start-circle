@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { cn } from "@/lib/utils";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import Link from "next/link";
 
 type HeaderProps = {
@@ -79,19 +86,18 @@ const Header = ({ className }: HeaderProps) => {
 
         {/* Right: Actions */}
         <div className="flex-1 flex justify-end gap-2">
-          <Button variant="ghost" className="rounded-lg max-md:hidden" asChild>
-            <a href="#">For Startups</a>
-          </Button>
-          <Button
-            variant="outline"
-            className="rounded-lg max-md:hidden"
-            asChild
-          >
-            <a href="/login">Log In</a>
-          </Button>
-          <Button className="rounded-lg max-md:hidden" asChild>
-            <a href="/signup">Sign Up</a>
-          </Button>
+          <SignedOut>
+            <SignInButton>
+              <Button variant="outline">Sign In</Button>
+            </SignInButton>
+            <SignUpButton>
+              <Button>Sign Up</Button>
+            </SignUpButton>
+          </SignedOut>
+          {/* Show the user button when the user is signed in */}
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
     </header>
