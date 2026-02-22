@@ -18,57 +18,25 @@ import {
   Settings2Icon,
   House,
   Briefcase,
-  Users,
+  Building2,
   LifeBuoy,
   Send,
 } from "lucide-react";
 import { NavSecondary } from "./nav-secondary";
 
-// This is sample data.
+// Sidebar data for talent users
 const data = {
   navMain: [
     {
       title: "Jobs",
-      url: "#",
+      url: "/talent/jobs",
       icon: <Briefcase />,
       isActive: true,
-      items: [
-        {
-          title: "Overview",
-          url: "#",
-        },
-        {
-          title: "Job Postings",
-          url: "/dashboard/jobs",
-        },
-        {
-          title: "Applications",
-          url: "#",
-        },
-        {
-          title: "Drafts",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Talent",
-      url: "#",
-      icon: <Users />,
-      items: [
-        {
-          title: "Talent Pool",
-          url: "/dashboard/talent",
-        },
-        {
-          title: "Saved Talent",
-          url: "#",
-        },
-        {
-          title: "Outreach History",
-          url: "#",
-        },
-      ],
+      title: "Startups",
+      url: "/talent/startups",
+      icon: <Building2 />,
     },
     {
       title: "Settings",
@@ -76,15 +44,15 @@ const data = {
       icon: <Settings2Icon />,
       items: [
         {
-          title: "Company Profile",
+          title: "Profile",
+          url: "/talent/settings",
+        },
+        {
+          title: "Account",
           url: "#",
         },
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Other",
+          title: "Notifications",
           url: "#",
         },
       ],
@@ -104,14 +72,14 @@ const data = {
   ],
 };
 
-export function AppSidebar({ profile }: { profile: Profile }) {
+export function TalentSidebar({ profile }: { profile: Profile }) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
+              <a href="/talent/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <House />
                 </div>
@@ -120,7 +88,7 @@ export function AppSidebar({ profile }: { profile: Profile }) {
                     <span className="font-bold">START</span>{" "}
                     <span className="font-light">Circle</span>
                   </span>
-                  <span className="truncate text-xs">Dashboard</span>
+                  <span className="truncate text-xs">Talent Dashboard</span>
                 </div>
               </a>
             </SidebarMenuButton>

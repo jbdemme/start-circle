@@ -95,7 +95,7 @@ export function RecentApplicationsPreview({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/jobs" className="gap-1">
+          <Link href="/startup/jobs" className="gap-1">
             View all
             <ArrowRight className="h-4 w-4" />
           </Link>

@@ -4,13 +4,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newJobSchema } from "@/lib/schema";
+import { newJobSchema, type NewJobFormData } from "@/lib/schema";
 import {
   DEPARTMENT_LABELS,
   JOB_TYPE_LABELS,
-  type JobFormData,
+  type JobRow,
 } from "@/lib/types/job";
-import { createJob } from "@/lib/actions";
+import { createJob, updateJob } from "@/lib/actions";
 import { toast } from "sonner";
 
 import {
@@ -31,36 +31,45 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-interface NewJobFormProps {
+interface JobFormProps {
   startupId: string;
+  initialData?: JobRow;
+  jobId?: string;
 }
 
-export function NewJobForm({ startupId }: NewJobFormProps) {
+export function JobForm({ startupId, initialData, jobId }: JobFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditMode = !!initialData && !!jobId;
 
-  const form = useForm<JobFormData>({
+  const form = useForm<NewJobFormData>({
     resolver: zodResolver(newJobSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      location: "",
-      department: undefined,
-      jobType: undefined,
+      title: initialData?.title ?? "",
+      description: initialData?.description ?? "",
+      location: initialData?.location ?? "",
+      department: initialData?.department ?? undefined,
+      jobType: initialData?.job_type ?? undefined,
     },
     mode: "onBlur",
   });
 
-  async function onSubmit(data: JobFormData) {
+  async function onSubmit(data: NewJobFormData) {
     setIsSubmitting(true);
 
-    const result = await createJob(startupId, data);
+    const result = isEditMode
+      ? await updateJob(jobId, data)
+      : await createJob(startupId, data);
 
     if (result.success) {
-      toast.success("Job created successfully");
+      toast.success(
+        isEditMode ? "Job updated successfully" : "Job created successfully",
+      );
       router.back();
     } else {
-      toast.error(result.error || "Failed to create job");
+      toast.error(
+        result.error || `Failed to ${isEditMode ? "update" : "create"} job`,
+      );
       setIsSubmitting(false);
     }
   }
@@ -128,7 +137,7 @@ export function NewJobForm({ startupId }: NewJobFormProps) {
                   <Field data-invalid={fieldState.invalid} className="gap-2">
                     <FieldLabel htmlFor="job-type">Job type</FieldLabel>
                     <Select
-                      value={field.value}
+                      value={field.value ?? undefined}
                       onValueChange={field.onChange}
                       name="jobType"
                     >
@@ -160,7 +169,7 @@ export function NewJobForm({ startupId }: NewJobFormProps) {
                   <Field data-invalid={fieldState.invalid} className="gap-2">
                     <FieldLabel htmlFor="department">Department</FieldLabel>
                     <Select
-                      value={field.value}
+                      value={field.value ?? undefined}
                       onValueChange={field.onChange}
                       name="department"
                     >
@@ -244,9 +253,16 @@ export function NewJobForm({ startupId }: NewJobFormProps) {
           className="whitespace-nowrap"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Saving..." : "Save as draft"}
+          {isSubmitting
+            ? "Saving..."
+            : isEditMode
+              ? "Save changes"
+              : "Save as draft"}
         </Button>
       </div>
     </form>
   );
 }
+
+// Backward compatibility export
+export const NewJobForm = JobForm;

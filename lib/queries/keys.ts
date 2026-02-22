@@ -21,3 +21,12 @@ export const profileKeys = {
   me: () => [...profileKeys.all, "me"] as const,
   detail: (id: string) => [...profileKeys.all, id] as const,
 } as const;
+
+export const talentKeys = {
+  all: ["talents"] as const,
+  lists: () => [...talentKeys.all, "list"] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...talentKeys.lists(), filters] as const,
+  details: () => [...talentKeys.all, "detail"] as const,
+  detail: (id: string) => [...talentKeys.details(), id] as const,
+} as const;

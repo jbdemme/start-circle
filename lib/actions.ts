@@ -63,7 +63,9 @@ export async function loginNewUser(
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  // Redirect based on user role from app_metadata
+  const role = data.user?.app_metadata?.role || "talent";
+  redirect(`/${role}/dashboard`);
 }
 
 export async function signUpNewUserr(formData: FormData) {
@@ -82,13 +84,14 @@ export async function signUpNewUserr(formData: FormData) {
   }
   console.log(email, password, fullName, role);
 
+  // Sign up with role in app_metadata (this is the correct way for Supabase Cloud)
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
-        role,
+        role, // This goes into user_metadata, but we need it in app_metadata
       },
     },
   });
@@ -98,6 +101,8 @@ export async function signUpNewUserr(formData: FormData) {
     console.log(error.message);
   } else {
     console.log("successfully created new user");
+    // Note: For Supabase Cloud, you'll need to manually set app_metadata
+    // via the Admin API or Dashboard to make role available in JWT
   }
 
   redirect("/login");
@@ -126,10 +131,15 @@ export async function logInAction(formData: FormData) {
     console.log("SUPABASE ERROR:");
     console.log(error.message);
   } else {
-    console.log("successfully created new user");
+    console.log("successfully logged in user");
   }
 
-  redirect("/dashboard");
+  // Redirect based on user role from app_metadata
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const role = user?.app_metadata?.role || "talent";
+  redirect(`/${role}/dashboard`);
 }
 
 export async function signOutAction() {
@@ -162,14 +172,15 @@ export async function createJob(
   return { success: true };
 }
 
-export async function publishJob(
+export async function updateJobStatus(
   jobId: string,
+  status: "draft" | "active" | "paused" | "expired",
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("jobs")
-    .update({ status: "active" })
+    .update({ status })
     .eq("id", jobId)
     .select();
 
@@ -180,6 +191,41 @@ export async function publishJob(
   }
 
   console.log("NO ERROR!");
+  revalidatePath("/dashboard/jobs");
+  return { success: true };
+}
+
+/**
+ * @deprecated Use updateJobStatus instead
+ */
+export async function publishJob(
+  jobId: string,
+): Promise<{ success: boolean; error?: string }> {
+  return updateJobStatus(jobId, "active");
+}
+
+export async function updateJob(
+  jobId: string,
+  data: JobFormData,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      department: data.department,
+      job_type: data.jobType,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", jobId);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
   revalidatePath("/dashboard/jobs");
   return { success: true };
 }

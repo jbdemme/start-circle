@@ -1,5 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
+import next from "next";
 import { NextResponse, type NextRequest } from "next/server";
+
+const PUBLIC_PATHS = ["/", "/about", "/legal", "/login", "/signup"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -41,15 +44,67 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims;
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  const nextUrl = request.nextUrl.clone();
+  const nextSitePublic = PUBLIC_PATHS.includes(nextUrl.pathname);
+
+  if (!user && !nextSitePublic) {
+    // no user and next site not public
+    // => redirect the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // Role-based routing for users on private routes
+  if (user && !nextSitePublic) {
+    // Check app_metadata for role and status of user
+    if (
+      !user.app_metadata ||
+      !user.app_metadata.role ||
+      !user.app_metadata.status
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/error?message=User%20role%20not%20found.";
+      return NextResponse.redirect(url);
+    }
+
+    const role = user.app_metadata.role;
+    const status = user.app_metadata.status;
+
+    // Redirect wrong routes to the main dashboard for the role
+    if (!request.nextUrl.pathname.startsWith(`/${role}`)) {
+      const url = request.nextUrl.clone();
+
+      console.log(
+        `Redirecting user with role ${role} from ${request.nextUrl.pathname} to their dashboard at /${role}`,
+      );
+      url.pathname = `/${role}`;
+      return NextResponse.redirect(url);
+    }
+
+    // Redirect them based on non-accepted status
+    if (status === "in_review" && nextUrl.pathname !== `/${role}/in-review`) {
+      nextUrl.pathname = `/${role}/in-review`;
+      return NextResponse.redirect(nextUrl);
+    } else if (
+      status === "rejected" &&
+      nextUrl.pathname !== `/${role}/rejected`
+    ) {
+      nextUrl.pathname = `/${role}/rejected`;
+      return NextResponse.redirect(nextUrl);
+    }
+
+    // Redirect non-accepted users to a waiting page (except for settings/auth routes)
+    // Uncomment and adjust this block when you have a waiting/pending page:
+    // if (
+    //   status !== "accepted" &&
+    //   !request.nextUrl.pathname.startsWith("/pending") &&
+    //   !request.nextUrl.pathname.startsWith("/auth")
+    // ) {
+    //   const url = request.nextUrl.clone();
+    //   url.pathname = "/pending";
+    //   return NextResponse.redirect(url);
+    // }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

@@ -7,10 +7,9 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * 1. Exclude specific public paths: /, /about, /legal
-     * 2. Exclude static files and images
-     */
-    "/dashboard",
+    // Match all dashboard, startup, and talent routes
+    "/dashboard/:path*",
+    "/startup/:path*",
+    "/talent/:path*",
   ],
 };

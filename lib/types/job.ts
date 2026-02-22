@@ -1,33 +1,39 @@
 // ============================================
-// JOB TYPES - SINGLE SOURCE OF TRUTH
+// JOB TYPES - ZOD SCHEMAS & TYPE INFERENCE
 // ============================================
 
-// --- CONSTANTS ---
+import { z } from "zod";
 
-export const JOB_STATUS = {
-  DRAFT: "draft",
-  ACTIVE: "active",
-  PAUSED: "paused",
-  EXPIRED: "expired",
-} as const;
+// --- SCHEMAS ---
 
-export const DEPARTMENT = {
-  GENERALIST: "generalist",
-  TECH: "tech",
-  SALES_GTM: "sales-gtm",
-  OPERATIONS: "operations",
-  FINANCE: "finance",
-  PEOPLE_HR: "people-hr",
-  GROWTH_MARKETING: "growth-marketing",
-  PRODUCT: "product",
-  OTHER: "other",
-} as const;
+/**
+ * Job status schema
+ */
+export const JobStatusSchema = z.enum(["draft", "active", "paused", "expired"]);
 
-export const JOB_TYPE = {
-  FULL_TIME: "full-time",
-  INTERNSHIP: "internship",
-  PART_TIME_WORKING_STUDENT: "part-time-working-student",
-} as const;
+/**
+ * Department schema
+ */
+export const DepartmentSchema = z.enum([
+  "generalist",
+  "tech",
+  "sales-gtm",
+  "operations",
+  "finance",
+  "people-hr",
+  "growth-marketing",
+  "product",
+  "other",
+]);
+
+/**
+ * Job type schema
+ */
+export const JobTypeSchema = z.enum([
+  "full-time",
+  "internship",
+  "part-time-working-student",
+]);
 
 // --- LABEL MAPPINGS (for display) ---
 
@@ -56,49 +62,65 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   expired: "Expired",
 };
 
-// --- TYPE EXPORTS ---
+// --- TYPE EXPORTS (inferred from schemas) ---
 
-export type JobStatus = (typeof JOB_STATUS)[keyof typeof JOB_STATUS];
-export type Department = (typeof DEPARTMENT)[keyof typeof DEPARTMENT];
-export type JobType = (typeof JOB_TYPE)[keyof typeof JOB_TYPE];
+export type JobStatus = z.infer<typeof JobStatusSchema>;
+export type Department = z.infer<typeof DepartmentSchema>;
+export type JobType = z.infer<typeof JobTypeSchema>;
 
-// --- INTERFACE DEFINITIONS ---
+// --- DATABASE ROW SCHEMA ---
 
-// Database row type (matches Supabase jobs table)
-export interface JobRow {
-  id: number;
-  created_at: string;
-  updated_at: string | null;
-  startup_id: string;
-  status: JobStatus;
-  title: string;
-  description: string;
-  location: string | null;
-  department: Department | null;
-  job_type: JobType | null;
-}
+/**
+ * Schema for the raw database row from Supabase jobs table
+ */
+export const JobRowSchema = z.object({
+  id: z.number(),
+  created_at: z.string(),
+  updated_at: z.string().nullable(),
+  startup_id: z.string(),
+  status: JobStatusSchema,
+  title: z.string(),
+  description: z.string(),
+  location: z.string().nullable(),
+  department: DepartmentSchema.nullable(),
+  job_type: JobTypeSchema.nullable(),
+});
 
-// Form input type for creating/editing jobs
-export interface JobFormData {
-  title: string;
-  description: string;
-  location: string;
-  department: Department | null;
-  jobType: JobType | null;
-}
+export type JobRow = z.infer<typeof JobRowSchema>;
 
-// Display type for job listings
-export interface JobListing {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  department: Department | null;
-  jobType: JobType | null;
-  status: JobStatus;
-  createdAt?: Date;
-  applicationsCount?: number;
-}
+// --- FORM DATA SCHEMA ---
+
+/**
+ * Schema for creating/editing jobs via forms
+ */
+export const JobFormDataSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  location: z.string().min(1, "Location is required"),
+  department: DepartmentSchema.nullable(),
+  jobType: JobTypeSchema.nullable(),
+});
+
+export type JobFormData = z.infer<typeof JobFormDataSchema>;
+
+// --- DISPLAY TYPE SCHEMA ---
+
+/**
+ * Schema for job listings display
+ */
+export const JobListingSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  location: z.string(),
+  department: DepartmentSchema.nullable(),
+  jobType: JobTypeSchema.nullable(),
+  status: JobStatusSchema,
+  createdAt: z.date().optional(),
+  applicationsCount: z.number().optional(),
+});
+
+export type JobListing = z.infer<typeof JobListingSchema>;
 
 // --- HELPER FUNCTIONS ---
 
@@ -112,4 +134,36 @@ export function getJobTypeLabel(jobType: JobType | null): string {
 
 export function getJobStatusLabel(status: JobStatus | null): string {
   return status ? (JOB_STATUS_LABELS[status] ?? status) : "—";
+}
+
+/**
+ * Transform a JobRow from the database to a JobListing for display.
+ */
+export function transformJobRowToListing(job: JobRow): JobListing {
+  return {
+    id: String(job.id),
+    title: job.title,
+    description: job.description,
+    location: job.location ?? "",
+    department: job.department,
+    jobType: job.job_type,
+    status: job.status,
+    createdAt: new Date(job.created_at),
+  };
+}
+
+/**
+ * Validate and parse a job row from the database.
+ * Returns the parsed data or throws a ZodError.
+ */
+export function parseJobRow(data: unknown): JobRow {
+  return JobRowSchema.parse(data);
+}
+
+/**
+ * Safely parse a job row, returning null if invalid.
+ */
+export function safeParseJobRow(data: unknown): JobRow | null {
+  const result = JobRowSchema.safeParse(data);
+  return result.success ? result.data : null;
 }

@@ -1,6 +1,6 @@
 "use client";
 import { JobListingsTable } from "@/components/job-listings-table";
-import { type JobListing, DEPARTMENT, JOB_TYPE } from "@/lib/types/job";
+import { type JobListing } from "@/lib/types/job";
 
 // Sample data for testing JobListingsTable
 const sampleJobListings: JobListing[] = [
@@ -10,8 +10,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "We are looking for an experienced frontend developer to join our team and help build amazing user experiences.",
     location: "Berlin, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "tech",
+    jobType: "full-time",
     status: "active",
   },
   {
@@ -20,8 +20,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Join our marketing team to drive product awareness and go-to-market strategies.",
     location: "Remote",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "sales-gtm",
+    jobType: "full-time",
     status: "active",
   },
   {
@@ -30,8 +30,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Build and maintain scalable backend services for our growing platform.",
     location: "Munich, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "tech",
+    jobType: "full-time",
     status: "paused",
   },
   {
@@ -40,8 +40,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Great opportunity for students to gain hands-on experience in operations management.",
     location: "Hamburg, Germany",
-    department: DEPARTMENT.OPERATIONS,
-    jobType: JOB_TYPE.INTERNSHIP,
+    department: "operations",
+    jobType: "internship",
     status: "draft",
   },
   {
@@ -50,8 +50,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Manage and improve our CI/CD pipelines and cloud infrastructure.",
     location: "Frankfurt, Germany",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "tech",
+    jobType: "full-time",
     status: "expired",
   },
   {
@@ -60,8 +60,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Drive outbound sales efforts and qualify leads for the sales team.",
     location: "Remote",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "sales-gtm",
+    jobType: "full-time",
     status: "active",
   },
   {
@@ -70,8 +70,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Support the HR team with recruiting, onboarding, and employee engagement initiatives.",
     location: "Berlin, Germany",
-    department: DEPARTMENT.OPERATIONS,
-    jobType: JOB_TYPE.PART_TIME_WORKING_STUDENT,
+    department: "operations",
+    jobType: "part-time-working-student",
     status: "active",
   },
   {
@@ -80,8 +80,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Analyze business data and provide insights to support decision-making.",
     location: "Cologne, Germany",
-    department: DEPARTMENT.OTHER,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "other",
+    jobType: "full-time",
     status: "paused",
   },
   {
@@ -90,8 +90,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Design intuitive and beautiful user interfaces for our web and mobile applications.",
     location: "Remote",
-    department: DEPARTMENT.TECH,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "tech",
+    jobType: "full-time",
     status: "draft",
   },
   {
@@ -100,8 +100,8 @@ const sampleJobListings: JobListing[] = [
     description:
       "Ensure customer satisfaction and drive retention through excellent support.",
     location: "Munich, Germany",
-    department: DEPARTMENT.SALES_GTM,
-    jobType: JOB_TYPE.FULL_TIME,
+    department: "sales-gtm",
+    jobType: "full-time",
     status: "expired",
   },
 ];

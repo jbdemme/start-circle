@@ -252,7 +252,7 @@ export default function JobListingsPage() {
   const invalidateJobs = useInvalidateJobs();
 
   const handleEdit = (id: string) => {
-    router.push(`/dashboard/jobs/${id}/edit`);
+    router.push(`/startup/jobs/${id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -262,7 +262,7 @@ export default function JobListingsPage() {
 
   const handleCreate = () => {
     console.log("Create new job");
-    router.push("/dashboard/jobs/new");
+    router.push("/startup/jobs/new");
   };
 
   const handlePublish = (id: string) => {

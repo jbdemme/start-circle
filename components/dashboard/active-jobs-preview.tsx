@@ -12,8 +12,9 @@ import Link from "next/link";
 import {
   type JobListing,
   type JobStatus,
-  DEPARTMENT,
+  type Department,
   JOB_STATUS_LABELS,
+  DEPARTMENT_LABELS,
 } from "@/lib/types/job";
 
 // Re-export for backward compatibility
@@ -33,7 +34,7 @@ const defaultJobs: ActiveJobItem[] = [
   {
     id: "1",
     title: "Senior ML Engineer",
-    department: DEPARTMENT.TECH,
+    department: "tech",
     location: "Remote",
     applicationsCount: 18,
     status: "active",
@@ -42,7 +43,7 @@ const defaultJobs: ActiveJobItem[] = [
   {
     id: "2",
     title: "Founders Associate",
-    department: DEPARTMENT.OPERATIONS,
+    department: "operations",
     location: "Vienna",
     applicationsCount: 24,
     status: "active",
@@ -51,7 +52,7 @@ const defaultJobs: ActiveJobItem[] = [
   {
     id: "3",
     title: "GTM Intern",
-    department: DEPARTMENT.SALES_GTM,
+    department: "sales-gtm",
     location: "Vienna",
     applicationsCount: 5,
     status: "paused",
@@ -91,7 +92,7 @@ export function ActiveJobsPreview({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/jobs" className="gap-1">
+          <Link href="/startup/jobs" className="gap-1">
             Manage
             <ArrowRight className="h-4 w-4" />
           </Link>

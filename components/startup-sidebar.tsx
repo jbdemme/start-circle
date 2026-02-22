@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { NavSecondary } from "./nav-secondary";
 
-// This is sample data.
+// Sidebar data for startup users
 const data = {
   navMain: [
     {
@@ -35,11 +35,11 @@ const data = {
       items: [
         {
           title: "Overview",
-          url: "#",
+          url: "/startup/dashboard",
         },
         {
           title: "Job Postings",
-          url: "/dashboard/jobs",
+          url: "/startup/jobs",
         },
         {
           title: "Applications",
@@ -58,7 +58,7 @@ const data = {
       items: [
         {
           title: "Talent Pool",
-          url: "/dashboard/talent",
+          url: "/startup/talent",
         },
         {
           title: "Saved Talent",
@@ -104,14 +104,14 @@ const data = {
   ],
 };
 
-export function AppSidebar({ profile }: { profile: Profile }) {
+export function StartupSidebar({ profile }: { profile: Profile }) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
+              <a href="/startup/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <House />
                 </div>
@@ -120,7 +120,7 @@ export function AppSidebar({ profile }: { profile: Profile }) {
                     <span className="font-bold">START</span>{" "}
                     <span className="font-light">Circle</span>
                   </span>
-                  <span className="truncate text-xs">Dashboard</span>
+                  <span className="truncate text-xs">Startup Dashboard</span>
                 </div>
               </a>
             </SidebarMenuButton>

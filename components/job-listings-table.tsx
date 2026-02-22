@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Edit, MoreHorizontal, Rocket, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Pause, Rocket, Trash2 } from "lucide-react";
 import {
   type JobListing,
   type JobStatus,
@@ -45,6 +45,7 @@ interface JobListingsTableProps {
   onPublish?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onPause?: (id: string) => void;
 }
 
 // Status badge variant mapping
@@ -63,6 +64,7 @@ export function JobListingsTable({
   onPublish,
   onEdit,
   onDelete,
+  onPause,
 }: JobListingsTableProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
@@ -128,15 +130,26 @@ export function JobListingsTable({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          onSelect={() => {
-                            onPublish?.(job.id);
-                          }}
-                          disabled={job.status !== "draft"}
-                        >
-                          <Rocket className="mr-2 h-4 w-4" />
-                          Publish
-                        </DropdownMenuItem>
+                        {job.status !== "active" && (
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              onPublish?.(job.id);
+                            }}
+                          >
+                            <Rocket className="mr-2 h-4 w-4" />
+                            Publish
+                          </DropdownMenuItem>
+                        )}
+                        {job.status === "active" && (
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              onPause?.(job.id);
+                            }}
+                          >
+                            <Pause className="mr-2 h-4 w-4" />
+                            Pause
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onSelect={() => onEdit?.(job.id)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
