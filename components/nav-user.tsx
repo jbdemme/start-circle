@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { signOutAction } from "@/lib/actions";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import {
   ChevronsUpDownIcon,
   SparklesIcon,
@@ -33,8 +33,20 @@ export interface Profile {
   avatar_url?: string;
 }
 
-export function NavUser({ profile }: { profile: Profile }) {
+export function NavUser() {
   const { isMobile } = useSidebar();
+  const { user, isLoaded } = useUser();
+
+  if (!isLoaded || !user) {
+    return (
+      <div className="p-2 animate-pulse h-12 rounded-lg bg-sidebar-accent" />
+    );
+  }
+
+  const fullName = user.fullName ?? "User";
+  const email = user.primaryEmailAddress?.emailAddress ?? "";
+  const imageUrl = user.imageUrl;
+  const initials = user.firstName?.charAt(0) ?? "U";
 
   return (
     <SidebarMenu>
@@ -46,14 +58,14 @@ export function NavUser({ profile }: { profile: Profile }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={""} alt={""} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={imageUrl} alt={fullName} />
+                <AvatarFallback className="rounded-lg">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {profile.full_name}
-                </span>
-                <span className="truncate text-xs">{profile.email}</span>
+                <span className="truncate font-medium">{fullName}</span>
+                <span className="truncate text-xs">{email}</span>
               </div>
               <ChevronsUpDownIcon className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -67,14 +79,14 @@ export function NavUser({ profile }: { profile: Profile }) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={"user.avatar"} alt={profile.full_name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={imageUrl} alt={fullName} />
+                  <AvatarFallback className="rounded-lg">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
-                    {profile.full_name}
-                  </span>
-                  <span className="truncate text-xs">{profile.email}</span>
+                  <span className="truncate font-medium">{fullName}</span>
+                  <span className="truncate text-xs">{email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -101,17 +113,12 @@ export function NavUser({ profile }: { profile: Profile }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" asChild>
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="flex gap-2 items-center w-full"
-                >
-                  <LogOutIcon />
-                  Log out
-                </button>
-              </form>
-            </DropdownMenuItem>
+            <SignOutButton>
+              <DropdownMenuItem variant="destructive">
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            </SignOutButton>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
