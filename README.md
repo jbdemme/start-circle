@@ -5,4 +5,5 @@ A platform for connecting talent and Startup by START Vienna.
 ## Tech Stack
 
 - Next.js (app router) deployed on Vercel (+ Tailwind & shadcn)
-- Database & Auth: Supabase
+- Database: Supabase
+- Auth: Clerk
