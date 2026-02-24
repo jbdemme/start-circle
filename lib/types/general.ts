@@ -5,6 +5,7 @@ import { z } from "zod";
 export const RoleSchema = z.enum(["talent", "startup"]);
 
 export const ApplicationStatusSchema = z.enum([
+  "new",
   "application",
   "in_review",
   "accepted",

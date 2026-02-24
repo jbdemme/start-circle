@@ -14,9 +14,10 @@ export default function OnboardingComponent() {
     const res = await setRole(formData);
     if (res?.message) {
       // Forces a token refresh and refreshes the `User` object
-      toast.success(`${res.message.role} role selected!`);
+      const role = res.message.role as string;
+      toast.success(`${role} role selected!`);
       await user?.reload();
-      router.push("/");
+      router.push(`/application/${role}`);
     }
     if (res?.error) {
       toast.error(res.error);

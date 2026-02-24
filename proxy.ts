@@ -1,25 +1,27 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { ApplicationStatus, Role } from "./lib/types/general";
 
 const isPublicRoute = createRouteMatcher(["/", "/sign-in", "/sign-up"]);
 
 const ONBOARDING_POLICIES = {
   new: {
     isAllowed: createRouteMatcher(["/choose-role(.*)"]),
-    redirectTo: "/choose-role",
+    redirectTo: () => "/choose-role",
   },
   application: {
     // Notice we allow both the application flow AND the role choice (if they want to go back)
+    // TODO: Prevent the user from visiting application/wrong-role
     isAllowed: createRouteMatcher(["/application(.*)", "/choose-role(.*)"]),
-    redirectTo: "/application",
+    redirectTo: (role: string | undefined) => `/application/${role}`,
   },
   in_review: {
     isAllowed: createRouteMatcher(["/review(.*)"]),
-    redirectTo: "/review",
+    redirectTo: (role: string | undefined) => `/review/${role}`,
   },
   rejected: {
     isAllowed: createRouteMatcher(["/rejected(.*)"]),
-    redirectTo: "/rejected",
+    redirectTo: (role: string | undefined) => `/rejected/${role}`,
   },
 };
 
@@ -28,11 +30,12 @@ type UserStatus = keyof typeof ONBOARDING_POLICIES;
 export function enforceOnboardingRoute(
   req: NextRequest,
   status: string | undefined,
+  role: string | undefined,
 ) {
   const policy = ONBOARDING_POLICIES[(status as UserStatus) || "new"];
 
   if (!policy.isAllowed(req)) {
-    const url = new URL(policy.redirectTo, req.url);
+    const url = new URL(policy.redirectTo(role), req.url);
     return NextResponse.redirect(url);
   } else {
     return NextResponse.next();
@@ -54,9 +57,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   // Accepted check: is the user accepted?
   const status = sessionClaims?.status;
+  const role = sessionClaims?.role;
   if (status !== "accepted") {
     // see onboarding policies above
-    return enforceOnboardingRoute(req, status);
+    return enforceOnboardingRoute(req, status, role);
   }
 
   return NextResponse.next();
