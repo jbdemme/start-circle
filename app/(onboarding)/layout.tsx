@@ -6,7 +6,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if ((await auth()).sessionClaims?.metadata?.status === "accepted") {
+  if ((await auth()).sessionClaims?.status === "accepted") {
     redirect("/");
   }
 

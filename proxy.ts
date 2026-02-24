@@ -25,7 +25,10 @@ const ONBOARDING_POLICIES = {
 
 type UserStatus = keyof typeof ONBOARDING_POLICIES;
 
-export function enforceOnboardingRoute(req: NextRequest, status: string) {
+export function enforceOnboardingRoute(
+  req: NextRequest,
+  status: string | undefined,
+) {
   const policy = ONBOARDING_POLICIES[(status as UserStatus) || "new"];
 
   if (!policy.isAllowed(req)) {
@@ -50,7 +53,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   // Accepted check: is the user accepted?
-  const status = sessionClaims?.metadata?.status;
+  const status = sessionClaims?.status;
   if (status !== "accepted") {
     // see onboarding policies above
     return enforceOnboardingRoute(req, status);
