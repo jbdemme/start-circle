@@ -1,3 +1,4 @@
+import { SPECIALITY_LABELS, SpecialitySchema } from "@/lib/types/general";
 import {
   Card,
   CardContent,
@@ -7,19 +8,14 @@ import {
 } from "../ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Check } from "lucide-react";
 
 export default function TalentOnboardingForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Talent Onboarding</CardTitle>
+        <CardTitle>Talent Application</CardTitle>
         <CardDescription>
           Complete your talent profile to get started.
         </CardDescription>
@@ -28,36 +24,44 @@ export default function TalentOnboardingForm() {
         <form>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="role">
-                Application Type <span className="text-destructive">*</span>
+              <FieldLabel htmlFor="full-name">
+                Full Name <span className="text-destructive">*</span>
               </FieldLabel>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your application type" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="startup">Startup</SelectItem>
-                  <SelectItem value="talent">Talent</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                type="text"
+                id="full-name"
+                name="full-name"
+                autoComplete="name"
+                placeholder="e.g. John Doe"
+                required
+              />
             </Field>
-            {
-              <Field>
-                <FieldLabel htmlFor="cv">
-                  Upload CV <span className="text-destructive">*</span>
-                </FieldLabel>
-                <Input id="cv" type="file" name="cv" required accept=".pdf" />
-                <FieldDescription>
-                  Upload your CV in PDF format
-                </FieldDescription>
-              </Field>
-            }
+            <Field>
+              <FieldLabel htmlFor="specialization">
+                Specialization <span className="text-destructive">*</span>
+              </FieldLabel>
+              <FieldDescription>Select all that apply</FieldDescription>
+              <ToggleGroup
+                type="multiple"
+                variant="vibrant-outline"
+                spacing={2}
+                className="flex flex-wrap"
+              >
+                {SpecialitySchema.options.map((option) => (
+                  <ToggleGroupItem key={option} value={option}>
+                    {SPECIALITY_LABELS[option]}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="cv">
+                Upload CV <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input id="cv" type="file" name="cv" required accept=".pdf" />
+              <FieldDescription>Upload your CV in PDF format</FieldDescription>
+            </Field>
           </FieldGroup>
-          <div>
-            <label>Application Type</label>
-            <p>Enter your type of application</p>
-            <input type="text" name="role" required />
-          </div>
           {/* {error && <p className="text-red-600">Error: {error}</p>} */}
           <button type="submit">Submit</button>
         </form>

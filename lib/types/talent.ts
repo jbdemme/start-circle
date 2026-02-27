@@ -3,7 +3,7 @@
 // ============================================
 
 import { z } from "zod";
-import { Speciality, SPECIALTY_LABELS, SpecialitySchema } from "./general";
+import { Speciality, SPECIALITY_LABELS, SpecialitySchema } from "./general";
 import { JOB_TYPE_LABELS, JobType, JobTypeSchema } from "./job";
 
 // --- SCHEMAS ---
@@ -48,7 +48,7 @@ export type TalentRow = z.infer<typeof TalentRowSchema>;
 
 export function getTypeLabel(type: string): string {
   if (!type) return "—";
-  return SPECIALTY_LABELS[type as Speciality] ?? type;
+  return SPECIALITY_LABELS[type as Speciality] ?? type;
 }
 
 export function getCurrentStageLabel(stage: string | null): string {

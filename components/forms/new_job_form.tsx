@@ -5,11 +5,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newJobSchema, type NewJobFormData } from "@/lib/schema";
-import {
-  DEPARTMENT_LABELS,
-  JOB_TYPE_LABELS,
-  type JobRow,
-} from "@/lib/types/job";
+import { JOB_TYPE_LABELS, type JobRow } from "@/lib/types/job";
 import { createJob, updateJob } from "@/lib/actions";
 import { toast } from "sonner";
 
@@ -30,6 +26,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import { SPECIALITY_LABELS } from "@/lib/types/general";
 
 interface JobFormProps {
   startupId: string;
@@ -177,7 +174,7 @@ export function JobForm({ startupId, initialData, jobId }: JobFormProps) {
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        {Object.entries(DEPARTMENT_LABELS).map(
+                        {Object.entries(SPECIALITY_LABELS).map(
                           ([value, label]) => (
                             <SelectItem key={value} value={value}>
                               {label}

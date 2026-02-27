@@ -4,7 +4,7 @@
 
 import { z } from "zod";
 import { de } from "zod/v4/locales";
-import { Speciality, SpecialitySchema, SPECIALTY_LABELS } from "./general";
+import { Speciality, SpecialitySchema, SPECIALITY_LABELS } from "./general";
 
 // --- SCHEMAS ---
 
@@ -62,7 +62,7 @@ export type JobRow = z.infer<typeof JobRowSchema>;
 
 export function getDepartmentLabel(department: Speciality | null): string {
   if (!department) return "—";
-  return SPECIALTY_LABELS[department] ?? department;
+  return SPECIALITY_LABELS[department] ?? department;
 }
 
 export function getJobTypeLabel(jobType: JobType | null): string {

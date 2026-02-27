@@ -24,7 +24,7 @@ export const setRole = async (
       },
     });
     return { message: res.publicMetadata as UserPublicMetadata };
-  } catch (err) {
+  } catch {
     return {
       error: `There was an error updating the user metadata to the role.`,
     };

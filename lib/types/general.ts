@@ -41,7 +41,7 @@ export const profileRowSchema = z.object({
 
 // --- LABEL MAPPINGS (for display) ---
 
-export const SPECIALTY_LABELS: Record<Speciality, string> = {
+export const SPECIALITY_LABELS: Record<Speciality, string> = {
   generalist: "Generalist",
   tech: "Tech",
   "sales-gtm": "Sales/GTM",
