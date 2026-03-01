@@ -65,7 +65,7 @@ export const talentApplicationSchema = z.object({
   current_stage: CurrentStageSchema,
   specializations: z.array(SpecialitySchema).optional(),
   linkedin_url: z.string().url().optional(),
-  relocate: z.boolean().default(false),
+  relocate: z.boolean(),
   description: z.string().max(1000).optional(),
   accept_terms: z.boolean({
     message: "You must accept the terms and conditions",

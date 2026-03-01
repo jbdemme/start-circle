@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { ApplicationStatus, Role } from "@/lib/schema";
 
 import { cn } from "@/lib/utils";
 import {
@@ -15,20 +14,53 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
-const naviationItems = [
+const initialNaviationItems = [
   { title: "Home", href: "/" },
   { title: "Getting Started", href: "/getting-started" },
   { title: "About us", href: "/about" },
 ];
 
+function getNavigationItems(
+  status: ApplicationStatus | undefined,
+  role: Role | undefined,
+) {
+  const items = [...initialNaviationItems];
+
+  if (status === undefined || status === "new") {
+    items[1] = { title: "Choose Role", href: "/choose-role" };
+  } else if (status === "application") {
+    items[1] = { title: "Finish application", href: `/application/${role}` };
+  } else if (status === "in_review") {
+    items[1] = { title: "Review screen", href: `/review/${role}` };
+  } else if (status === "accepted") {
+    items[1] = { title: "Dashboard", href: `/dashboard/${role}` };
+  } else if (status === "rejected") {
+    items[1] = { title: "Feedback", href: `/rejected/${role}` };
+  }
+
+  return items;
+}
+
 type HeaderProps = {
   className?: string;
 };
 
-const Header = ({ className }: HeaderProps) => {
+export default async function Header({ className }: HeaderProps) {
+  const { userId, sessionClaims } = await auth();
+  let navigationItems;
+  if (!userId) {
+    navigationItems = initialNaviationItems;
+  } else {
+    const status = sessionClaims?.app_status;
+    const role = sessionClaims?.app_role;
+    navigationItems = getNavigationItems(status, role);
+  }
+
   return (
     <header
       className={cn(
@@ -40,7 +72,7 @@ const Header = ({ className }: HeaderProps) => {
         {/* Left */}
         <div className="flex-1 flex justify-start">
           {/* Logo */}
-          <Link href="#">
+          <Link href="/">
             <h1 className="text-2xl">
               <span className="text-primary font-bold ">START</span>{" "}
               <span className="font-light">Circle</span>
@@ -53,7 +85,7 @@ const Header = ({ className }: HeaderProps) => {
           {/* Navigation */}
           <NavigationMenu>
             <NavigationMenuList>
-              {naviationItems.map((item) => (
+              {navigationItems.map((item) => (
                 <NavigationMenuItem key={item.href}>
                   <NavigationMenuLink
                     className="w-32 truncate justify-center"
@@ -86,26 +118,4 @@ const Header = ({ className }: HeaderProps) => {
       </div>
     </header>
   );
-};
-
-function ListItem({
-  title,
-  children,
-  href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink asChild>
-        <Link href={href}>
-          <div className="flex flex-col gap-1 text-sm">
-            <div className="leading-none font-medium">{title}</div>
-            <div className="text-muted-foreground line-clamp-2">{children}</div>
-          </div>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  );
 }
-
-export default Header;

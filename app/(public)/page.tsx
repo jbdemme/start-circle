@@ -9,15 +9,11 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <main className="flex flex-col">
+      <main className="h-full w-full flex flex-col mb-80">
         <HeroSection />
       </main>
-      <div className="fixed inset-0 -z-10 flex items-center justify-center overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-dvh -z-10 flex items-center justify-center">
         <div className="w-[90vmin] h-[90vmin] bg-transparent border-2 border-cyan-400 rounded-full shadow-[0_0_300px_rgba(34,211,238,0.8)] animate-pulse"></div>
-      </div>
-      <div className="fixed bottom-4 right-4 z-10 text-xs text-muted-foreground">
-        <a href="/legal_notice">Legal Notice</a> |{" "}
-        <a href="/privacy_policy">Privacy Policy</a>
       </div>
     </>
   );

@@ -1,11 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { BadgeCheck, ArrowRight } from "lucide-react";
 import React from "react";
 
 const HeroSection = () => {
   return (
-    <section className="flex min-h-[calc(100dvh-4rem)] flex-1 flex-col items-center justify-center gap-12 overflow-x-hidden">
+    <section className="h-full w-full flex flex-col items-center justify-center gap-12 overflow-x-hidden">
       {/* Hero Content */}
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 px-4 text-center sm:px-6 lg:px-8">
         {/* Main Message */}
@@ -33,11 +34,11 @@ const HeroSection = () => {
 
         {/* CTA */}
         <div className="flex gap-4">
-          <Button size="lg" asChild>
-            <a href="/signup">
+          <SignUpButton>
+            <Button size="lg">
               Join now <ArrowRight />
-            </a>
-          </Button>
+            </Button>
+          </SignUpButton>
           <Button variant="secondary" size="lg" asChild>
             <a href="#">Learn more</a>
           </Button>

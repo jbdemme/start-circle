@@ -30,7 +30,7 @@ export default function OnboardingComponent() {
         <Button
           name="role"
           variant="outline"
-          className="h-40 w-40 text-2xl hover:scale-130"
+          className="h-40 w-40 text-2xl hover:scale-130 hover:bg-primary/30!"
           value="talent"
         >
           Talent
@@ -38,7 +38,7 @@ export default function OnboardingComponent() {
         <Button
           name="role"
           variant="outline"
-          className="h-40 w-40 text-2xl hover:scale-130"
+          className="h-40 w-40 text-2xl hover:scale-130 hover:bg-primary/30!"
           value="startup"
         >
           Startup

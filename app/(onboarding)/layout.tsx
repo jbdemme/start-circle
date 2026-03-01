@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -10,5 +11,10 @@ export default async function RootLayout({
     redirect("/");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Footer />
+    </>
+  );
 }

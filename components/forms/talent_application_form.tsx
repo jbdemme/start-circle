@@ -64,7 +64,7 @@ export default function TalentApplicationForm({
       linkedin_url: "",
       location: "",
       relocate: false,
-      current_stage: null,
+      current_stage: undefined,
       specializations: [],
       description: "",
       accept_terms: false,

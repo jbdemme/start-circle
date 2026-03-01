@@ -73,23 +73,17 @@ export default function StartupOnboardingForm() {
           </div>
           <div className="col-span-full md:col-span-3">
             <Field className="gap-2">
-              <FieldLabel htmlFor="address">Email</FieldLabel>
+              <FieldLabel htmlFor="email">Application Email</FieldLabel>
               <Input
                 type="text"
-                id="address"
-                name="address"
-                autoComplete="street-address"
-                placeholder="https://www.perplexity.ai"
+                id="email"
+                name="email"
+                placeholder="people@perplexity.ai"
               />
             </Field>
           </div>
           <div className="col-span-full md:col-span-3">
-            <FieldGroup className="gap-3">
-              <Field orientation="horizontal">
-                <Checkbox id="email-marketing" name="email-marketing" />
-                <FieldLabel htmlFor="email-marketing"></FieldLabel>
-              </Field>
-            </FieldGroup>
+            <CheckboxGroup data={checkboxData} />
           </div>
         </div>
         <Separator className="my-6" />
@@ -103,5 +97,61 @@ export default function StartupOnboardingForm() {
         </div>
       </form>
     </div>
+  );
+}
+
+const checkboxData: CheckboxData = {
+  legend: "Email Preferences",
+  description: "Select the emails you would like to receive.",
+  items: [
+    {
+      id: "email-updates",
+      label: "Platform updates and new features",
+      defaultChecked: true,
+    },
+    {
+      id: "email-job-inquiries",
+      label: "Job posting inquiries from candidates",
+      defaultChecked: true,
+    },
+    {
+      id: "email-newsletter",
+      label: "Hiring tips and industry newsletter",
+      defaultChecked: false,
+    },
+  ],
+};
+
+type CheckboxData = {
+  legend: string;
+  description: string;
+  items: {
+    id: string;
+    label: string;
+    defaultChecked?: boolean;
+  }[];
+};
+
+export function CheckboxGroup({ data }: { data: CheckboxData }) {
+  return (
+    <FieldSet>
+      <FieldLegend variant="label">{data.legend}</FieldLegend>
+      <FieldDescription>{data.description}</FieldDescription>
+      <FieldGroup className="gap-3">
+        {/* Map through the items in the data and render a checkbox for each item */}
+        {data.items.map((item) => (
+          <Field orientation="horizontal" key={item.id}>
+            <Checkbox
+              id={item.id}
+              name={item.id}
+              defaultChecked={item.defaultChecked}
+            />
+            <FieldLabel htmlFor={item.id} className="font-normal">
+              {item.label}
+            </FieldLabel>
+          </Field>
+        ))}
+      </FieldGroup>
+    </FieldSet>
   );
 }
