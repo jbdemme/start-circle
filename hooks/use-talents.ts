@@ -18,18 +18,26 @@ import {
  */
 interface TalentWithProfileRow {
   user_id: string;
-  type: string | null;
   abilities: Record<string, unknown> | null;
   location: string | null;
   current_stage: string | null;
   availability: string[] | null;
-  cv_url: string | null;
+  cv_file_key: string | null;
+  specializations: string[] | null;
+  linkedin_url: string | null;
+  relocate: boolean | null;
+  description: string | null;
+  accept_terms: boolean | null;
+  accept_privacy: boolean | null;
+  accept_data_sharing: boolean | null;
   profiles: {
     id: string;
     full_name: string;
     email: string | null;
     role: string;
     status: string;
+    created_at: string;
+    updated_at: string | null;
   } | null;
 }
 
@@ -48,24 +56,6 @@ function validateEmail(email: string | null): string | null {
     return null;
   }
   return email;
-}
-
-/**
- * Validate URL format
- */
-function validateUrl(url: string | null): string | null {
-  if (!url) return null;
-  try {
-    new URL(url);
-    return url;
-  } catch {
-    console.warn(
-      `Invalid optional field "cvUrl":`,
-      url,
-      "- falling back to null",
-    );
-    return null;
-  }
 }
 
 /**
@@ -117,18 +107,26 @@ async function fetchTalents(): Promise<TalentWithProfile[]> {
     .select(
       `
       user_id,
-      type,
       abilities,
       location,
       current_stage,
       availability,
-      cv_url,
+      cv_file_key,
+      specializations,
+      linkedin_url,
+      relocate,
+      description,
+      accept_terms,
+      accept_privacy,
+      accept_data_sharing,
       profiles!talents_user_id_fkey (
         id,
         full_name,
         email,
         role,
-        status
+        status,
+        created_at,
+        updated_at
       )
     `,
     )
@@ -146,10 +144,9 @@ async function fetchTalents(): Promise<TalentWithProfile[]> {
     .filter((talent): talent is TalentWithProfile => {
       // Phase 1: Validate mandatory fields only
       const mandatoryResult = TalentWithProfileMandatorySchema.safeParse({
-        userId: talent.userId,
-        fullName: talent.fullName,
+        full_name: talent.full_name,
         role: talent.role,
-        profileStatus: talent.profileStatus,
+        status: talent.status,
       });
 
       if (!mandatoryResult.success) {
@@ -163,19 +160,10 @@ async function fetchTalents(): Promise<TalentWithProfile[]> {
       return true;
     })
     .map((talent) => ({
-      // Mandatory fields (already validated)
-      userId: talent.userId,
-      fullName: talent.fullName,
-      role: talent.role,
-      profileStatus: talent.profileStatus,
-      // Optional fields (validated individually, fallback to null)
+      ...talent,
       email: validateEmail(talent.email),
-      type: talent.type, // string, no special validation
-      abilities: talent.abilities, // JSON, no special validation
-      location: talent.location, // string, no special validation
-      currentStage: validateCurrentStage(talent.currentStage),
+      current_stage: validateCurrentStage(talent.current_stage),
       availability: validateAvailability(talent.availability),
-      cvUrl: validateUrl(talent.cvUrl),
     }));
 }
 
@@ -186,17 +174,26 @@ function transformTalentRow(row: TalentWithProfileRow): TalentWithProfile {
   const profile = row.profiles;
 
   return {
-    userId: row.user_id,
-    fullName: profile?.full_name ?? "Unknown",
+    full_name: profile?.full_name ?? "Unknown",
     email: profile?.email ?? null,
-    role: profile?.role ?? "Talent",
-    profileStatus: profile?.status ?? "unknown",
-    type: row.type,
+    role: profile?.role ?? "talent",
+    status: profile?.status ?? "in_review",
+    created_at: profile?.created_at
+      ? new Date(profile.created_at)
+      : new Date(),
+    updated_at: profile?.updated_at ? new Date(profile.updated_at) : null,
     abilities: row.abilities,
     location: row.location,
-    currentStage: row.current_stage as TalentWithProfile["currentStage"],
+    current_stage: row.current_stage as TalentWithProfile["current_stage"],
     availability: row.availability as TalentWithProfile["availability"],
-    cvUrl: row.cv_url,
+    cv_file_key: row.cv_file_key,
+    specializations: row.specializations,
+    linkedin_url: row.linkedin_url,
+    relocate: row.relocate,
+    description: row.description,
+    accept_terms: row.accept_terms,
+    accept_privacy: row.accept_privacy,
+    accept_data_sharing: row.accept_data_sharing,
   };
 }
 

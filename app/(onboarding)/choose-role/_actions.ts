@@ -19,8 +19,8 @@ export const setRole = async (
   try {
     const res = await client.users.updateUser(userId, {
       publicMetadata: {
-        role: formData.get("role"),
-        status: "application",
+        app_role: formData.get("role"),
+        app_status: "application",
       },
     });
     return { message: res.publicMetadata as UserPublicMetadata };

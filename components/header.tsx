@@ -18,6 +18,12 @@ import {
 } from "@clerk/nextjs";
 import Link from "next/link";
 
+const naviationItems = [
+  { title: "Home", href: "/" },
+  { title: "Getting Started", href: "/getting-started" },
+  { title: "About us", href: "/about" },
+];
+
 type HeaderProps = {
   className?: string;
 };
@@ -47,39 +53,17 @@ const Header = ({ className }: HeaderProps) => {
           {/* Navigation */}
           <NavigationMenu>
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className="w-26 truncate justify-center"
-                  title="Home"
-                  href="/"
-                >
-                  Home
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="w-38 truncate justify-center">
-                  Getting Started
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-64">
-                    <ListItem href="/talent" title="Talent">
-                      Join the inner circle as a talent
-                    </ListItem>
-                    <ListItem href="/startup" title="Startup">
-                      Get access to the best prevetted talent
-                    </ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className="w-26 truncate justify-center"
-                  title="About us"
-                  href="#"
-                >
-                  About us
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              {naviationItems.map((item) => (
+                <NavigationMenuItem key={item.href}>
+                  <NavigationMenuLink
+                    className="w-32 truncate justify-center"
+                    title={item.title}
+                    href={item.href}
+                  >
+                    {item.title}
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
             </NavigationMenuList>
           </NavigationMenu>
         </div>

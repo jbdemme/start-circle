@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "./supabase/server";
-import { type JobFormData } from "./types/job";
+import { type JobFormData } from "./schema/job";
 import { dataTagErrorSymbol } from "@tanstack/react-query";
 
 export type ActionState = {
@@ -160,7 +160,7 @@ export async function createJob(
     description: data.description,
     location: data.location,
     department: data.department,
-    job_type: data.jobType,
+    job_type: data.job_type,
     status: "draft",
   });
 
@@ -217,7 +217,7 @@ export async function updateJob(
       description: data.description,
       location: data.location,
       department: data.department,
-      job_type: data.jobType,
+      job_type: data.job_type,
       updated_at: new Date().toISOString(),
     })
     .eq("id", jobId);

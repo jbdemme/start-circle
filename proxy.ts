@@ -1,8 +1,16 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { ApplicationStatus, Role } from "./lib/types/general";
+import { ApplicationStatus, Role } from "./lib/schema";
 
-const isPublicRoute = createRouteMatcher(["/", "/sign-in", "/sign-up"]);
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in",
+  "/sign-up",
+  "/about",
+  "/getting-started",
+  "/legal_notice",
+  "/privacy_policy",
+]);
 
 const ONBOARDING_POLICIES = {
   new: {
@@ -17,7 +25,9 @@ const ONBOARDING_POLICIES = {
   },
   in_review: {
     isAllowed: createRouteMatcher(["/review(.*)"]),
-    redirectTo: (role: string | undefined) => `/review/${role}`,
+    redirectTo: (role: string | undefined) => {
+      return `/review/${role}`;
+    },
   },
   rejected: {
     isAllowed: createRouteMatcher(["/rejected(.*)"]),
@@ -25,14 +35,12 @@ const ONBOARDING_POLICIES = {
   },
 };
 
-type UserStatus = keyof typeof ONBOARDING_POLICIES;
-
 export function enforceOnboardingRoute(
   req: NextRequest,
-  status: string | undefined,
-  role: string | undefined,
+  status: Exclude<ApplicationStatus, "accepted"> | undefined,
+  role: Role | undefined,
 ) {
-  const policy = ONBOARDING_POLICIES[(status as UserStatus) || "new"];
+  const policy = ONBOARDING_POLICIES[status || "new"];
 
   if (!policy.isAllowed(req)) {
     const url = new URL(policy.redirectTo(role), req.url);
@@ -56,8 +64,8 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   // Accepted check: is the user accepted?
-  const status = sessionClaims?.status;
-  const role = sessionClaims?.role;
+  const status = sessionClaims?.app_status as ApplicationStatus | undefined;
+  const role = sessionClaims?.app_role as Role | undefined;
   if (status !== "accepted") {
     // see onboarding policies above
     return enforceOnboardingRoute(req, status, role);
