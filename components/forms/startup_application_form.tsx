@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 
-export default function StartupOnboardingForm() {
+export default function StartupApplicationForm() {
   return (
     <div className="sm:mx-auto sm:max-w-2xl">
       <h3 className="text-2xl font-semibold text-foreground">
@@ -35,7 +35,6 @@ export default function StartupOnboardingForm() {
                 type="text"
                 id="company-name"
                 name="company-name"
-                autoComplete="company-name"
                 placeholder="e.g. Perplexity"
                 required
               />
@@ -43,14 +42,13 @@ export default function StartupOnboardingForm() {
           </div>
           <div className="col-span-full">
             <Field className="gap-2">
-              <FieldLabel htmlFor="company-name">
+              <FieldLabel htmlFor="company-description">
                 Description
                 <span className="text-destructive">*</span>
               </FieldLabel>
               <Textarea
-                id="company-name"
-                name="company-name"
-                autoComplete="company-name"
+                id="company-description"
+                name="company-description"
                 placeholder="Who are you and what do you do?"
                 required
               />
@@ -71,7 +69,7 @@ export default function StartupOnboardingForm() {
               />
             </Field>
           </div>
-          <div className="col-span-full md:col-span-3">
+          {/* <div className="col-span-full md:col-span-3">
             <Field className="gap-2">
               <FieldLabel htmlFor="email">Application Email</FieldLabel>
               <Input
@@ -83,44 +81,46 @@ export default function StartupOnboardingForm() {
             </Field>
           </div>
           <div className="col-span-full md:col-span-3">
-            <CheckboxGroup data={checkboxData} />
-          </div>
+            <CheckboxGroup
+              data={{
+                legend: "Email Preferences",
+                description: "Select the emails you would like to receive.",
+                items: [
+                  {
+                    id: "email-updates",
+                    label: "Platform updates and new features",
+                  },
+                  {
+                    id: "email-job-inquiries",
+                    label: "Job posting inquiries from candidates",
+                  },
+                  {
+                    id: "email-newsletter",
+                    label: "Hiring tips and industry newsletter",
+                  },
+                ],
+              }}
+            />
+          </div> */}
         </div>
         <Separator className="my-6" />
         <div className="flex items-center justify-end space-x-4">
-          <Button type="button" variant="outline" className="whitespace-nowrap">
-            Cancel
+          <Button
+            type="button"
+            variant="outline"
+            className="whitespace-nowrap"
+            asChild
+          >
+            <a href="/choose-role">Switch Role</a>
           </Button>
           <Button type="submit" className="whitespace-nowrap">
-            Submit
+            Submit Application
           </Button>
         </div>
       </form>
     </div>
   );
 }
-
-const checkboxData: CheckboxData = {
-  legend: "Email Preferences",
-  description: "Select the emails you would like to receive.",
-  items: [
-    {
-      id: "email-updates",
-      label: "Platform updates and new features",
-      defaultChecked: true,
-    },
-    {
-      id: "email-job-inquiries",
-      label: "Job posting inquiries from candidates",
-      defaultChecked: true,
-    },
-    {
-      id: "email-newsletter",
-      label: "Hiring tips and industry newsletter",
-      defaultChecked: false,
-    },
-  ],
-};
 
 type CheckboxData = {
   legend: string;
