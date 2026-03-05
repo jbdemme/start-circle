@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavUser, Profile } from "@/components/nav-user";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -72,7 +72,7 @@ const data = {
   ],
 };
 
-export function TalentSidebar({ profile }: { profile: Profile }) {
+export function TalentSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -100,7 +100,7 @@ export function TalentSidebar({ profile }: { profile: Profile }) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser profile={profile} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
