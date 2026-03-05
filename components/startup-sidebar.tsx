@@ -35,7 +35,7 @@ const data = {
       items: [
         {
           title: "Overview",
-          url: "/startup/dashboard",
+          url: "/startup",
         },
         {
           title: "Job Postings",

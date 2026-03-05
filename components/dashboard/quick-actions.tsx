@@ -22,14 +22,14 @@ const quickActions: QuickAction[] = [
     label: "Post a Job",
     description: "Create a new job listing",
     icon: <Plus className="h-4 w-4" />,
-    href: "/dashboard/jobs",
+    href: "/startup/jobs",
     variant: "default",
   },
   {
     label: "Search Talent",
     description: "Find pre-vetted candidates",
     icon: <Search className="h-4 w-4" />,
-    href: "#",
+    href: "/startup/talent",
     variant: "outline",
   },
   {
