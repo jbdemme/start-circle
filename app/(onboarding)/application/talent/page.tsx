@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SPECIALITY_LABELS, SpecialitySchema } from "@/lib/schema";
+import { CURRENT_STAGE_LABELS, CurrentStageSchema } from "@/lib/schema";
 import { submitTalentApplication } from "./action";
 
 export default function TalentApplicationPage() {
@@ -30,9 +30,9 @@ function TalentApplicationForm() {
           <SelectValue placeholder="Select your experience level" />
         </SelectTrigger>
         <SelectContent position="popper">
-          {SpecialitySchema.options.map((option) => (
+          {CurrentStageSchema.options.map((option) => (
             <SelectItem key={option} value={option}>
-              {SPECIALITY_LABELS[option]}
+              {CURRENT_STAGE_LABELS[option]}
             </SelectItem>
           ))}
         </SelectContent>
