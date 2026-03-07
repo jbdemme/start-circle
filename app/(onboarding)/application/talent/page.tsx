@@ -30,6 +30,9 @@ function TalentApplicationForm() {
     <form action={formAction} className="space-y-4 w-full">
       <p className="text-muted-foreground">{state.message}</p>
       <h1 className="font-bold text2xl md:text-4xl">Talent Application Form</h1>
+      {state.errors?.upload && (
+        <div className="text-destructive">{state.errors.upload[0]}</div>
+      )}
       Full Name:
       <Input placeholder="Sam Altman" name="fullName" />
       {state.errors?.full_name && (
