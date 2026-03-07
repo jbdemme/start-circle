@@ -56,7 +56,7 @@ export async function submitTalentApplication(
       full_name: validatedData.data.full_name,
       email: validatedData.data.email,
       role: "talent",
-      status: "testing_status",
+      status: "in_review",
     })
     .eq("id", userId);
 
@@ -66,6 +66,24 @@ export async function submitTalentApplication(
       message: "",
       errors: {
         upload: ["Failed to save name and/or email. Please try again."],
+      },
+    };
+  }
+
+  // insert talent
+  const { error: talentError } = await supabase.from("talents").insert({
+    user_id: userId,
+    location: validatedData.data.location,
+    current_stage: validatedData.data.current_stage,
+    linkedin_url: validatedData.data.linkedin_url,
+  });
+
+  if (talentError) {
+    console.error("Talent insert error:", talentError);
+    return {
+      message: "",
+      errors: {
+        upload: ["Failed to submit application. Please try again."],
       },
     };
   }
