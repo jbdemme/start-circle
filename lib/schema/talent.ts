@@ -9,6 +9,7 @@ import {
   ProfileSchema,
   getLabel,
 } from "./general";
+import { currentUser } from "@clerk/nextjs/server";
 
 export const CurrentStageSchema = z.enum([
   "bachelor",
@@ -57,21 +58,17 @@ export const TalentWithProfileMandatorySchema = TalentWithProfileSchema.pick({
   status: true,
 });
 
-// Talent application form schema is a pick of the joined shape
+// Talent application form schema
 export const talentApplicationSchema = z.object({
-  full_name: z.string().min(2).max(100),
-  email: z.string().email("Invalid email address"),
+  full_name: z.string().min(2, "Full name is required").max(100),
+  email: z.string().email({ message: "Invalid email address" }),
   location: z.string().max(100).optional(),
+  linkedin_url: z.string().url({ message: "Invalid LinkedIn URL" }),
   current_stage: CurrentStageSchema,
-  specializations: z.array(SpecialitySchema).optional(),
-  linkedin_url: z.string().url().optional(),
-  relocate: z.boolean(),
-  description: z.string().max(1000).optional(),
-  accept_terms: z.boolean({
-    message: "You must accept the terms and conditions",
-  }),
-  accept_privacy: z.boolean({ message: "You must accept the privacy policy" }),
-  accept_data_sharing: z.boolean({ message: "You must accept data sharing" }),
+  phone_number: z
+    .string()
+    .regex(/^\+[0-9\s\-\/]+$/, "Invalid phone number")
+    .optional(),
 });
 export type TalentApplicationFormData = z.infer<typeof talentApplicationSchema>;
 
