@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CircleUser, Mail } from "lucide-react";
 import { Linkedin } from "./ui/svgs/linkedin";
+import Link from "next/link";
 
 const navLinks = [
   { href: "/about", label: "About" },
@@ -27,10 +28,10 @@ export function Footer() {
     <footer className="mx-auto max-w-5xl *:px-4 *:py-4 *:md:px-6">
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link className="flex items-center gap-2" href="/" prefetch={false}>
             <span className="font-bold text-primary">START</span>{" "}
             <span className="font-light">Circle</span>
-          </div>
+          </Link>
           <nav className="hidden sm:block">
             <ul className="flex flex-wrap gap-4 font-medium text-muted-foreground text-sm md:gap-6">
               {navLinks.map((link) => (
