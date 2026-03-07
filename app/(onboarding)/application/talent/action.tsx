@@ -2,7 +2,7 @@
 
 import { talentApplicationSchema } from "@/lib/schema";
 import { createServerSupabaseClient } from "@/utils/supabase/client-server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 export type FormState = {
   message: string;
@@ -86,6 +86,20 @@ export async function submitTalentApplication(
         upload: ["Failed to submit application. Please try again."],
       },
     };
+  }
+
+  // update clerk metadata to review status
+  try {
+    const client = await clerkClient();
+    await client.users.updateUserMetadata(userId, {
+      publicMetadata: {
+        app_role: "talent",
+        app_status: "in_review",
+      },
+    });
+    console.log("Clerk metadata updated successfully");
+  } catch (clerkError) {
+    console.error("Clerk metadata update error:", clerkError);
   }
 
   return { message: "Application submitted successfully!" };
