@@ -23,7 +23,7 @@ export default function TalentApplicationPage() {
 
 function TalentApplicationForm() {
   const [state, formAction, pending] = useActionState(submitTalentApplication, {
-    message: "",
+    error: "",
   });
 
   return (

@@ -5,16 +5,7 @@ import { createServerSupabaseClient } from "@/utils/supabase/client-server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
 export type FormState = {
-  message: string;
-  errors?: {
-    upload?: string[];
-    full_name?: string[];
-    email?: string[];
-    location?: string[];
-    linkedin_url?: string[];
-    current_stage?: string[];
-    phone_number?: string[];
-  };
+  error?: string;
 };
 
 export async function submitTalentApplication(
@@ -35,19 +26,15 @@ export async function submitTalentApplication(
 
   if (!validatedData.success) {
     return {
-      message: "",
-      errors: validatedData.error.flatten().fieldErrors,
+      error: validatedData.error.issues[0].message,
     };
   }
 
   // STEP 2: Upload data to supabase
   const { userId } = await auth();
-  if (!userId)
-    return { message: "", errors: { upload: ["User not authenticated"] } };
+  if (!userId) return { error: "User not authenticated" };
 
   const supabase = await createServerSupabaseClient();
-
-  console.log("userId:", userId);
 
   // update profile information
   const { error: profileError } = await supabase
@@ -60,16 +47,6 @@ export async function submitTalentApplication(
     })
     .eq("id", userId);
 
-  if (profileError) {
-    console.error("Profile update error:", profileError);
-    return {
-      message: "",
-      errors: {
-        upload: ["Failed to save name and/or email. Please try again."],
-      },
-    };
-  }
-
   // insert talent
   const { error: talentError } = await supabase.from("talents").insert({
     user_id: userId,
@@ -78,13 +55,10 @@ export async function submitTalentApplication(
     linkedin_url: validatedData.data.linkedin_url,
   });
 
-  if (talentError) {
-    console.error("Talent insert error:", talentError);
+  if (talentError || profileError) {
+    console.error("Supabase error:", talentError || profileError);
     return {
-      message: "",
-      errors: {
-        upload: ["Failed to submit application. Please try again."],
-      },
+      error: "Failed to submit application. Please try again.",
     };
   }
 
@@ -101,6 +75,5 @@ export async function submitTalentApplication(
   } catch (clerkError) {
     console.error("Clerk metadata update error:", clerkError);
   }
-
-  return { message: "Application submitted successfully!" };
+  return {};
 }
