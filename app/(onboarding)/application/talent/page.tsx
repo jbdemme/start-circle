@@ -11,7 +11,10 @@ import {
 } from "@/components/ui/select";
 import { CURRENT_STAGE_LABELS, CurrentStageSchema } from "@/lib/schema";
 import { submitTalentApplication } from "./action";
-import { useActionState } from "react";
+import React, { startTransition, useActionState } from "react";
+import { getPresignedUploadUrl } from "@/lib/cloudflare/r2";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export default function TalentApplicationPage() {
   return (
@@ -25,19 +28,59 @@ function TalentApplicationForm() {
   const [state, formAction, pending] = useActionState(submitTalentApplication, {
     error: "",
   });
+  const [cvError, setCvError] = React.useState<string>("");
+
+  const handleSubmit = async (formData: FormData) => {
+    setCvError("");
+
+    // Upload CV file to Cloudflare R2
+    const cvFile = formData.get("cvFile") as File;
+
+    if (cvFile.size === 0) {
+      setCvError("Please upload your CV");
+      return;
+    } else if (cvFile.type !== "application/pdf") {
+      setCvError("Only PDF files are allowed");
+      return;
+    } else if (cvFile.size > MAX_FILE_SIZE) {
+      setCvError("File size exceeds 5MB limit");
+      return;
+    }
+
+    const uploadUrl = await getPresignedUploadUrl(
+      `${Date.now()}-${cvFile.name}`,
+    );
+
+    const uploadResponse = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/pdf",
+      },
+      body: cvFile,
+    });
+
+    if (!uploadResponse.ok) {
+      setCvError("Failed to upload CV. Please try again.");
+      return;
+    }
+
+    // Add the public URL of the uploaded CV to the form data
+    const cvPublicUrl = uploadUrl.split("?")[0]; // Remove query params
+    formData.append("cvUrl", cvPublicUrl);
+
+    formData.delete("cvFile");
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
 
   return (
-    <form action={formAction} className="space-y-4 w-full">
-      <p className="text-muted-foreground">{state.message}</p>
+    <form action={handleSubmit} className="space-y-4 w-full">
       <h1 className="font-bold text2xl md:text-4xl">Talent Application Form</h1>
-      {state.errors?.upload && (
-        <div className="text-destructive">{state.errors.upload[0]}</div>
-      )}
+      <p className="text-destructive text-sm">{state.error || cvError}</p>
       Full Name:
       <Input placeholder="Sam Altman" name="fullName" />
-      {state.errors?.full_name && (
-        <p className="text-destructive">{state.errors.full_name[0]}</p>
-      )}
       Experience Level:
       <Select name="experienceLevel">
         <SelectTrigger>
@@ -51,9 +94,6 @@ function TalentApplicationForm() {
           ))}
         </SelectContent>
       </Select>
-      {state.errors?.current_stage && (
-        <p className="text-destructive">{state.errors.current_stage[0]}</p>
-      )}
       Location:
       <Input placeholder="eg. Vienna" name="location" />
       LinkedIn URL:
@@ -61,19 +101,12 @@ function TalentApplicationForm() {
         placeholder="https://linkedin.com/in/sam-altman"
         name="linkedinUrl"
       />
-      {state.errors?.linkedin_url && (
-        <p className="text-destructive">{state.errors.linkedin_url[0]}</p>
-      )}
       Contact Email:
       <Input placeholder="contact@samaltman.com" name="email" />
-      {state.errors?.email && (
-        <p className="text-destructive">{state.errors.email[0]}</p>
-      )}
       Phone Number (optional):
       <Input placeholder="+43 1 234 5678" name="phoneNumber" />
-      {state.errors?.phone_number && (
-        <p className="text-destructive">{state.errors.phone_number[0]}</p>
-      )}
+      CV upload:
+      <Input type="file" name="cvFile" accept="application/pdf" />
       <div className="flex justify-end gap-4">
         <Button variant="outline">Cancel</Button>
         <Button type="submit" disabled={pending}>
