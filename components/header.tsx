@@ -31,7 +31,7 @@ function getNavigationItems(
 ) {
   const items = [...initialNaviationItems];
 
-  if (status === undefined || status === "new") {
+  if (!status || status === "new") {
     items[1] = { title: "Choose Role", href: "/choose-role" };
   } else if (status === "application") {
     items[1] = { title: "Finish application", href: `/application/${role}` };
@@ -53,11 +53,13 @@ type HeaderProps = {
 export default async function Header({ className }: HeaderProps) {
   const { userId, sessionClaims } = await auth();
   let navigationItems;
+  console.log("userId:", userId);
   if (!userId) {
     navigationItems = initialNaviationItems;
   } else {
     const status = sessionClaims?.app_status;
     const role = sessionClaims?.app_role;
+    console.log("Session claims - status:", status, "role:", role);
     navigationItems = getNavigationItems(status, role);
   }
 
