@@ -29,7 +29,8 @@ export default function TalentReviewPage() {
       number: 3,
       icon: Mail,
       title: "Decision Notification",
-      description: "You'll receive an email with the outcome for your batch",
+      description:
+        "You'll receive an email with the outcome of your application",
     },
   ];
 
@@ -124,7 +125,7 @@ export default function TalentReviewPage() {
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
             <p className="text-sm text-foreground">
               <span className="font-semibold">Thank you for applying!</span>{" "}
-              We&apos;ll notify you by email once your batch review is complete.
+              We&apos;ll notify you by email once we made a decision.
             </p>
           </div>
 
@@ -134,7 +135,7 @@ export default function TalentReviewPage() {
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to start-circle
+              Back to START Circle
             </Link>
           </div>
         </div>
