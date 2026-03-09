@@ -2,7 +2,7 @@
 
 import { StartupApplicationSchema } from "@/lib/schema/startup";
 import { createServerSupabaseClient } from "@/utils/supabase/client-server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export type FormState = {
   error: string;

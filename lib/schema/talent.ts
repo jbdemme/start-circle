@@ -9,7 +9,6 @@ import {
   ProfileSchema,
   getLabel,
 } from "./general";
-import { currentUser } from "@clerk/nextjs/server";
 
 export const CurrentStageSchema = z.enum([
   "bachelor",
