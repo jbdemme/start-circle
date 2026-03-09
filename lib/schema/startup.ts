@@ -15,5 +15,6 @@ export const StartupApplicationSchema = z.object({
   website: z.string().url("Invalid URL"),
   description: z
     .string()
+    .min(1, "Description is required")
     .max(1000, "Description must be less than 1000 characters"),
 });

@@ -10,6 +10,8 @@ export async function submitStartupApplication(
   initialState: FormState,
   formData: FormData,
 ) {
+  console.log("Received startup application data:", formData);
+
   const validatedData = StartupApplicationSchema.safeParse({
     startupName: formData.get("startupName"),
     website: formData.get("website"),
