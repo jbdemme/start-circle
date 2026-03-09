@@ -1,6 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { startTransition, useActionState } from "react";
+import { submitStartupApplication } from "./action";
 
 export default function StartupApplicationPage() {
   return (
@@ -11,11 +15,25 @@ export default function StartupApplicationPage() {
 }
 
 function StartupApplicationForm() {
+  const [state, formAction, pending] = useActionState(
+    submitStartupApplication,
+    {
+      error: "",
+    },
+  );
+
+  const handleSubmit = async (formData: FormData) => {
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
   return (
-    <form className="space-y-4 w-full max-w-xl">
+    <form action={handleSubmit} className="space-y-4 w-full max-w-xl">
       <h1 className="font-bold text2xl md:text-4xl">
         Startup Application Form
       </h1>
+      <p className="text-destructive">{state.error}</p>
       Startup name:
       <Input placeholder="Perplexity AI" name="startupName" />
       Website:
