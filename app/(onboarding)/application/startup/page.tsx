@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { startTransition, useActionState } from "react";
 import { submitStartupApplication } from "./action";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function StartupApplicationPage() {
   return (
@@ -45,7 +46,14 @@ function StartupApplicationForm() {
       />
       <div className="flex justify-end gap-4">
         <Button variant="outline"> Cancel </Button>
-        <Button type="submit">Submit Application</Button>
+        <Button
+          type="submit"
+          disabled={pending}
+          variant={pending ? "outline" : "default"}
+        >
+          {pending && <Spinner data-icon="inline-start" />}
+          Submit Application
+        </Button>
       </div>
     </form>
   );
