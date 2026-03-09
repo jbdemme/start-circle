@@ -2,7 +2,7 @@
 
 import { StartupApplicationSchema } from "@/lib/schema/startup";
 import { createServerSupabaseClient } from "@/utils/supabase/client-server";
-import { currentUser } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 
 export type FormState = {
   error: string;
@@ -49,6 +49,20 @@ export async function submitStartupApplication(
   if (profileError || startupError) {
     console.error("Supabase error:", profileError || startupError);
     return { error: "Failed to submit application. Please try again." };
+  }
+
+  // update clerk metadata
+  try {
+    const client = await clerkClient();
+    client.users.updateUser(user.id, {
+      publicMetadata: {
+        app_role: "startup",
+        app_status: "in_review",
+      },
+    });
+  } catch (clerkError) {
+    console.error("Clerk error:", clerkError);
+    return { error: "Failed to update user metadata. Please try again." };
   }
 
   return { error: "" };
