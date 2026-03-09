@@ -31,7 +31,7 @@ export const AVAILABILITY_TYPE_LABELS = WORK_TYPE_LABELS;
 
 // Base talent row (as returned from Supabase queries)
 export const TalentRowSchema = z.object({
-  user_id: z.string().uuid(),
+  user_id: z.string(),
   specializations: z.array(SpecialitySchema).nullable(),
   abilities: z.record(z.unknown()).nullable(),
   location: z.string().nullable(),
