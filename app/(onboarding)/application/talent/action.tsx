@@ -38,18 +38,16 @@ export async function submitTalentApplication(
   const supabase = await createServerSupabaseClient();
 
   // update profile information
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update({
-      full_name: validatedData.data.full_name,
-      email: validatedData.data.email,
-      role: "talent",
-      status: "in_review",
-    })
-    .eq("id", userId);
+  const { error: profileError } = await supabase.from("profiles").upsert({
+    id: userId,
+    full_name: validatedData.data.full_name,
+    email: validatedData.data.email,
+    role: "talent",
+    status: "in_review",
+  });
 
   // insert talent
-  const { error: talentError } = await supabase.from("talents").insert({
+  const { error: talentError } = await supabase.from("talents").upsert({
     user_id: userId,
     location: validatedData.data.location,
     current_stage: validatedData.data.current_stage,
