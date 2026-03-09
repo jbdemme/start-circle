@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { startTransition, useActionState } from "react";
 import { submitStartupApplication } from "./action";
 import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 export default function StartupApplicationPage() {
   return (
@@ -16,6 +17,8 @@ export default function StartupApplicationPage() {
 }
 
 function StartupApplicationForm() {
+  const router = useRouter();
+
   const [state, formAction, pending] = useActionState(
     submitStartupApplication,
     {
@@ -45,7 +48,9 @@ function StartupApplicationForm() {
         name="description"
       />
       <div className="flex justify-end gap-4">
-        <Button variant="outline"> Cancel </Button>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
+          Cancel
+        </Button>
         <Button
           type="submit"
           disabled={pending}
