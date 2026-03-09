@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignUpButton } from "@clerk/nextjs";
 import { BadgeCheck, ArrowRight } from "lucide-react";
 import React from "react";
 
@@ -40,7 +40,7 @@ const HeroSection = () => {
             </Button>
           </SignUpButton>
           <Button variant="secondary" size="lg" asChild>
-            <a href="#">Learn more</a>
+            <a href="/learn_more">Learn more</a>
           </Button>
         </div>
       </div>
