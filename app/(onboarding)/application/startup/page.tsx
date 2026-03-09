@@ -34,11 +34,11 @@ function StartupApplicationForm() {
         Startup Application Form
       </h1>
       <p className="text-destructive">{state.error}</p>
-      Startup name:
+      Startup name: <Required />
       <Input placeholder="Perplexity AI" name="startupName" />
-      Website:
+      Website: <Required />
       <Input placeholder="https://www.perplexity.ai" name="website" />
-      Description:
+      Description: <Required />
       <Textarea
         placeholder="Tell us about your startup..."
         name="description"
@@ -48,5 +48,13 @@ function StartupApplicationForm() {
         <Button type="submit">Submit Application</Button>
       </div>
     </form>
+  );
+}
+
+function Required() {
+  return (
+    <span className="text-destructive" aria-hidden>
+      *
+    </span>
   );
 }
