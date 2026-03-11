@@ -22,7 +22,7 @@ export async function submitTalentApplication(
     linkedin_url: formData.get("linkedinUrl"),
     current_stage: formData.get("experienceLevel"),
     phone_number: formData.get("phoneNumber"),
-    cvUrl: formData.get("cvUrl"),
+    cvFileKey: formData.get("cvFileKey"),
   });
 
   if (!validatedData.success) {
@@ -52,7 +52,7 @@ export async function submitTalentApplication(
     location: validatedData.data.location,
     current_stage: validatedData.data.current_stage,
     linkedin_url: validatedData.data.linkedin_url,
-    cv_file_key: validatedData.data.cvUrl,
+    cv_file_key: validatedData.data.cvFileKey,
   });
 
   if (talentError || profileError) {

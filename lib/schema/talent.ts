@@ -68,7 +68,7 @@ export const talentApplicationSchema = z.object({
     .string()
     .regex(/^\+[0-9\s\-\/]+$/, "Invalid phone number")
     .optional(),
-  cvUrl: z.string().url({ message: "CV Upload Failed" }),
+  cvFileKey: z.string({ message: "CV upload failed" }),
 });
 export type TalentApplicationFormData = z.infer<typeof talentApplicationSchema>;
 

@@ -13,6 +13,7 @@ import { CURRENT_STAGE_LABELS, CurrentStageSchema } from "@/lib/schema";
 import { submitTalentApplication } from "./action";
 import React, { startTransition, useActionState } from "react";
 import { getPresignedUploadUrl } from "@/lib/cloudflare/r2";
+import { Spinner } from "@/components/ui/spinner";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -24,32 +25,19 @@ export default function TalentApplicationPage() {
   );
 }
 
-function TalentApplicationForm() {
-  const [state, formAction, pending] = useActionState(submitTalentApplication, {
-    error: "",
-  });
-  const [cvError, setCvError] = React.useState<string>("");
-
-  const handleSubmit = async (formData: FormData) => {
-    setCvError("");
-
-    // Upload CV file to Cloudflare R2
-    const cvFile = formData.get("cvFile") as File;
-
-    if (cvFile.size === 0) {
-      setCvError("Please upload your CV");
-      return;
-    } else if (cvFile.type !== "application/pdf") {
-      setCvError("Only PDF files are allowed");
-      return;
-    } else if (cvFile.size > MAX_FILE_SIZE) {
-      setCvError("File size exceeds 5MB limit");
-      return;
-    }
-
-    const uploadUrl = await getPresignedUploadUrl(
-      `${Date.now()}-${cvFile.name}`,
-    );
+/**
+ * Uploads a CV file to Cloudflare R2 storage using a presigned URL.
+ * @param cvFile - The CV file to upload
+ * @returns A promise resolving to an object with success status and fileKey or error
+ */
+async function uploadCvToR2(
+  cvFile: File,
+): Promise<
+  { success: true; fileKey: string } | { success: false; error: string }
+> {
+  try {
+    const fileKey = `${Date.now()}-${cvFile.name}`;
+    const uploadUrl = await getPresignedUploadUrl(fileKey);
 
     const uploadResponse = await fetch(uploadUrl, {
       method: "PUT",
@@ -60,14 +48,51 @@ function TalentApplicationForm() {
     });
 
     if (!uploadResponse.ok) {
-      setCvError("Failed to upload CV. Please try again.");
+      throw new Error(`Upload of CV with status ${uploadResponse.status}`);
+    }
+
+    return {
+      success: true,
+      fileKey: fileKey,
+    };
+  } catch (error) {
+    console.error("CV Upload Error", error);
+    return {
+      success: false,
+      error: (error as string) || "An error occurred during CV upload",
+    };
+  }
+}
+
+function TalentApplicationForm() {
+  const [state, formAction, pending] = useActionState(submitTalentApplication, {
+    error: "",
+  });
+  const [cvError, setCvError] = React.useState<string>("");
+
+  const handleSubmit = async (formData: FormData) => {
+    setCvError("");
+
+    const cvFile = formData.get("cvFile") as File;
+
+    // check CV file
+    if (cvFile.size === 0) {
+      return setCvError("Please select a CV file to upload");
+    } else if (cvFile.type !== "application/pdf") {
+      return setCvError("Only PDF files are allowed");
+    } else if (cvFile.size > MAX_FILE_SIZE) {
+      return setCvError("File size exceeds 5MB limit");
+    }
+
+    // upload CV file
+    const uploadResult = await uploadCvToR2(cvFile);
+
+    if (!uploadResult.success) {
+      setCvError("Failed to upload CV");
       return;
     }
 
-    // Add the public URL of the uploaded CV to the form data
-    const cvPublicUrl = uploadUrl.split("?")[0]; // Remove query params
-    formData.append("cvUrl", cvPublicUrl);
-
+    formData.set("cvFileKey", uploadResult.fileKey);
     formData.delete("cvFile");
 
     startTransition(() => {
@@ -109,7 +134,12 @@ function TalentApplicationForm() {
       <Input type="file" name="cvFile" accept="application/pdf" />
       <div className="flex justify-end gap-4">
         <Button variant="outline">Cancel</Button>
-        <Button type="submit" disabled={pending}>
+        <Button
+          type="submit"
+          disabled={pending}
+          variant={pending ? "outline" : "default"}
+        >
+          {pending && <Spinner data-icon="inline-start" />}
           Submit Application
         </Button>
       </div>
