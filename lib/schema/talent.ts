@@ -10,12 +10,12 @@ import {
   getLabel,
 } from "./general";
 
-export const CurrentStageSchema = z.enum([
-  "bachelor",
-  "master",
-  "early-career",
-  "experienced-professional",
-]);
+export const CurrentStageSchema = z.enum(
+  ["bachelor", "master", "early-career", "experienced-professional"],
+  {
+    message: "Current stage required",
+  },
+);
 
 export const CURRENT_STAGE_LABELS: Record<CurrentStage, string> = {
   bachelor: "Bachelor Student",
@@ -58,16 +58,23 @@ export const TalentWithProfileMandatorySchema = TalentWithProfileSchema.pick({
 });
 
 // Talent application form schema
+
+const nullIfEmpty = (val: unknown) => (val === "" ? null : val);
+
 export const talentApplicationSchema = z.object({
-  full_name: z.string().min(2, "Full name is required").max(100),
-  email: z.string().email({ message: "Invalid email address" }),
-  location: z.string().max(100).optional(),
-  linkedin_url: z.string().url({ message: "Invalid LinkedIn URL" }),
+  full_name: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  location: z.preprocess(nullIfEmpty, z.string().nullable().optional()),
+  linkedin_url: z.string().url("Invalid LinkedIn URL"),
   current_stage: CurrentStageSchema,
-  phone_number: z
-    .string()
-    .regex(/^\+[0-9\s\-\/]+$/, "Invalid phone number")
-    .optional(),
+  phone_number: z.preprocess(
+    nullIfEmpty,
+    z
+      .string()
+      .regex(/^\+[0-9\s\-\/]+$/, "Invalid phone number")
+      .nullable()
+      .optional(),
+  ),
   cvFileKey: z.string({ message: "CV upload failed" }),
 });
 export type TalentApplicationFormData = z.infer<typeof talentApplicationSchema>;
