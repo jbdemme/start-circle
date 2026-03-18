@@ -87,7 +87,7 @@ export default async function Header({ className }: HeaderProps) {
           <NavigationMenu>
             <NavigationMenuList>
               {navigationItems.map((item) => (
-                <NavigationMenuItem key={item.href}>
+                <NavigationMenuItem key={`${item.href}-${item.title}`}>
                   <NavigationMenuLink
                     className="w-32 truncate justify-center"
                     title={item.title}
