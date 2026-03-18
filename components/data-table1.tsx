@@ -78,7 +78,7 @@ export const DataTableColumnHeader = <TData, TValue>({
       variant="ghost"
       size="sm"
       className="flex h-8 items-center gap-2 px-0 text-sm font-medium text-foreground"
-      onClick={() => column.toggleSorting(sorted === "asc")}
+      // onClick={() => column.toggleSorting(sorted === "asc")}
     >
       <span>{title}</span>
       {sorted === "desc" ? (

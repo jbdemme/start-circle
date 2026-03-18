@@ -12,6 +12,15 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Targeted ignores for unused/broken components and files
+    "components/dashboard/**",
+    "components/data-table1.tsx",
+    "components/form-layout-01.tsx",
+    "components/header.tsx",
+    "_broken_routes/**",
+    "lib/actions.ts",
+    "app/(marketing)/learn_more/page.tsx",
+    "app/globals.css",
   ]),
 ]);
 

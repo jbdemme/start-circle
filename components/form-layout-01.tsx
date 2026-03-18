@@ -13,7 +13,6 @@ import {
 import { CURRENT_STAGE_LABELS, CurrentStageSchema } from "@/lib/schema";
 import { Label } from "./ui/label";
 import React, { startTransition, useActionState } from "react";
-import { submitTalentApplication } from "@/app/(onboarding)/application/talent/action";
 import { getPresignedUploadUrl } from "@/lib/cloudflare/r2";
 import Link from "next/link";
 
