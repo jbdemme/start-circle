@@ -79,14 +79,6 @@ export async function submitTalentApplication(
         user_id: clerkUserId,
         location: validatedData.location,
         cv_file_key: cvKey,
-        current_stage: validatedData.current_stage,
-        specializations: validatedData.specializations,
-        linkedin_url: validatedData.linkedin_url,
-        relocate: validatedData.relocate,
-        description: validatedData.description,
-        accept_terms: validatedData.accept_terms,
-        accept_privacy: validatedData.accept_privacy,
-        accept_data_sharing: validatedData.accept_data_sharing,
       })
       .select("user_id")
       .single();
