@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { BadgeCheck, ArrowRight } from "lucide-react";
-import React from "react";
 
 const HeroSection = () => {
   return (
@@ -34,11 +33,11 @@ const HeroSection = () => {
 
         {/* CTA */}
         <div className="flex gap-4">
-          <SignUpButton>
-            <Button size="lg">
+          <Button size="lg" asChild>
+            <Link href="/waitlist">
               Join now <ArrowRight />
-            </Button>
-          </SignUpButton>
+            </Link>
+          </Button>
           <Button variant="secondary" size="lg" asChild>
             <a href="/learn_more">Learn more</a>
           </Button>

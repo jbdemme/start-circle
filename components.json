@@ -25,6 +25,7 @@
     "@shadcn-studio": "https://shadcnstudio.com/r/{name}.json",
     "@shadcnblocks": "https://shadcnblocks.com/r/{name}.json",
     "@blocks": "https://blocks.so/r/{name}.json",
-    "@svgl": "https://svgl.app/r/{name}.json"
+    "@svgl": "https://svgl.app/r/{name}.json",
+    "@blocks-so": "https://blocks.so/r/{name}.json"
   }
 }

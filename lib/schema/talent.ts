@@ -65,6 +65,10 @@ export const talentApplicationSchema = z.object({
   full_name: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
   location: z.preprocess(nullIfEmpty, z.string().nullable().optional()),
+  relocate: z.preprocess(
+    (val) => (val === undefined ? false : val === "on"),
+    z.boolean(),
+  ),
   linkedin_url: z.string().url("Invalid LinkedIn URL"),
   current_stage: CurrentStageSchema,
   phone_number: z.preprocess(

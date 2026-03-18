@@ -14,14 +14,20 @@ import { submitTalentApplication } from "./action";
 import React, { startTransition, useActionState } from "react";
 import { getPresignedUploadUrl } from "@/lib/cloudflare/r2";
 import { Spinner } from "@/components/ui/spinner";
+import { Field } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
+import TalentApplicationForm1 from "@/components/form-layout-01";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export default function TalentApplicationPage() {
   return (
-    <div className="flex justify-center items-center p-4 md:p-8">
-      <TalentApplicationForm />
-    </div>
+    <>
+      <div className="flex justify-center items-center p-4 md:p-8">
+        <TalentApplicationForm />
+      </div>
+      <TalentApplicationForm1 />
+    </>
   );
 }
 
@@ -73,6 +79,8 @@ function TalentApplicationForm() {
   const handleSubmit = async (formData: FormData) => {
     setCvError("");
 
+    console.log("Received talent application data:", formData);
+
     const cvFile = formData.get("cvFile") as File;
 
     // check CV file
@@ -119,8 +127,13 @@ function TalentApplicationForm() {
           ))}
         </SelectContent>
       </Select>
-      Location:
-      <Input placeholder="eg. Vienna" name="location" />
+      <div className="flex gap-4 items-center">
+        <Field>
+          Location:
+          <Input placeholder="eg. Vienna" name="location" />
+        </Field>
+        <Checkbox name="relocate" />
+      </div>
       LinkedIn URL:
       <Input
         placeholder="https://linkedin.com/in/sam-altman"

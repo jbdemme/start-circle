@@ -13,6 +13,10 @@ const isPublicRoute = createRouteMatcher([
   "/privacy_policy",
 ]);
 
+const inviteCodes = ["abc123", "def456", "ghi789"];
+
+const signupRoute = createRouteMatcher(["/signup"]);
+
 const ONBOARDING_POLICIES = {
   new: {
     isAllowed: createRouteMatcher(["/choose-role(.*)"]),
@@ -57,6 +61,18 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Public check: Is route public? => go through
   if (isPublicRoute(req)) {
     return NextResponse.next();
+  }
+
+  if (signupRoute(req)) {
+    const { searchParams } = req.nextUrl;
+    const inviteCode = searchParams.get("code");
+
+    if (inviteCode && inviteCodes.includes(inviteCode)) {
+      return NextResponse.next();
+    } else {
+      console.log("Wrong invite code");
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
 
   // Auth Check: Is user authenticated? => redirect to sign in
