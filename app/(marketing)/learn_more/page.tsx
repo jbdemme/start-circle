@@ -227,12 +227,12 @@ export default function LearnMorePage() {
             and get direct access to Europe&apos;s most ambitious talent
             network.
           </p>
-          <Link href="/application/startup">
+          <Link href="/waitlist">
             <Button
               size="lg"
               className="h-14 px-10 text-lg font-medium rounded-full bg-white text-black hover:bg-zinc-200 transition-colors"
             >
-              Request Startup Access
+              Request Access
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>

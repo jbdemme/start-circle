@@ -11,6 +11,7 @@ const isPublicRoute = createRouteMatcher([
   "/getting-started",
   "/legal_notice",
   "/privacy_policy",
+  "/waitlist",
 ]);
 
 const inviteCodes = ["abc123", "def456", "ghi789"];

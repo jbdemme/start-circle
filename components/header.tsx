@@ -14,15 +14,14 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
-  useUser,
 } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 const initialNaviationItems = [
   { title: "Home", href: "/" },
-  { title: "Getting Started", href: "/getting-started" },
-  { title: "About us", href: "/about" },
+  { title: "Getting Started", href: "/learn_more" },
+  { title: "About us", href: "/learn_more" },
 ];
 
 function getNavigationItems(
@@ -104,18 +103,18 @@ export default async function Header({ className }: HeaderProps) {
 
         {/* Right: Actions */}
         <div className="flex-1 flex justify-end gap-2">
-          <SignedOut>
+          {/* <SignedOut>
             <SignInButton>
               <Button variant="outline">Sign In</Button>
             </SignInButton>
             <SignUpButton>
               <Button>Sign Up</Button>
             </SignUpButton>
-          </SignedOut>
+          </SignedOut> */}
           {/* Show the user button when the user is signed in */}
-          <SignedIn>
+          {/* <SignedIn>
             <UserButton />
-          </SignedIn>
+          </SignedIn> */}
         </div>
       </div>
     </header>

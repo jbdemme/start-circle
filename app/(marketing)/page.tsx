@@ -12,8 +12,8 @@ export default function HomePage() {
       <main className="h-full w-full flex flex-col mb-80">
         <HeroSection />
       </main>
-      <div className="absolute top-0 inset-x-0 h-dvh -z-10 flex items-center justify-center">
-        <div className="w-[90vmin] h-[90vmin] bg-transparent border-2 border-cyan-400 rounded-full shadow-[0_0_300px_rgba(34,211,238,0.8)] animate-pulse"></div>
+      <div className="hidden absolute inset-x-0 h-dvh -z-10 md:flex items-center justify-center md:top-5 -top-20">
+        <div className="w-[75vmin] md:w-[90vmin] h-[75vmin] md:h-[90vmin] bg-transparent border-2 border-primary rounded-full shadow-[0_0_300px_rgba(149,175,207,0.8)] animate-pulse"></div>
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import { Linkedin } from "./ui/svgs/linkedin";
 import Link from "next/link";
 
 const navLinks = [
-  { href: "/about", label: "About" },
+  { href: "/learn_more", label: "About" },
   { href: "mailto:circle@start-vienna.com", label: "Contact" },
   { href: "/legal_notice", label: "Legal Notice" },
   { href: "/privacy_policy", label: "Privacy Policy" },

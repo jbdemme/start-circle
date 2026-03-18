@@ -1,14 +1,51 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { createClient } from "./supabase/server";
 import { type JobFormData } from "./schema/job";
-import { dataTagErrorSymbol } from "@tanstack/react-query";
+import { RoleSchema } from "./schema/general";
 
 export type ActionState = {
   success?: string;
   error?: string;
 } | null;
+
+const WaitlistSchema = z.object({
+  email: z.string().email(),
+  role: RoleSchema,
+});
+
+export async function joinWaitlist(
+  prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const payload = {
+    email: formData.get("email"),
+    role: formData.get("role"),
+  };
+
+  const parsed = WaitlistSchema.safeParse(payload);
+  if (!parsed.success) {
+    return { error: "Enter a valid email and select a role." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("waitlist").insert({
+    email: parsed.data.email,
+    role: parsed.data.role,
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { success: "You're already on the waitlist." };
+    }
+
+    return { error: "Unable to join the waitlist right now." };
+  }
+
+  return { success: "You're on the list. We'll be in touch soon." };
+}
 
 export async function signUpNewUser(
   prevState: ActionState,
