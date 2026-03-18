@@ -91,7 +91,7 @@ export async function submitTalentApplication(
       };
     }
 
-    // Update Clerk metadata to reflect application submission
+    // Update Clerk metadata to reflect new application submission
     try {
       console.log("Updating Clerk metadata after application");
       const client = await clerkClient();
