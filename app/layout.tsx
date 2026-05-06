@@ -5,6 +5,13 @@ import { shadcn } from "@clerk/themes";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+  title: "START Circle",
+  description: "Find the best talent for your startup",
+};
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 

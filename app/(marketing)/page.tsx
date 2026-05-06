@@ -1,10 +1,4 @@
 import HeroSection from "@/components/hero-section";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "START Circle",
-  description: "Find the best talent for your startup",
-};
 
 export default function HomePage() {
   return (
