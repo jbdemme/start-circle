@@ -5,17 +5,8 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { ApplicationStatus, Role } from "@/lib/schema";
 
 import { cn } from "@/lib/utils";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 const initialNaviationItems = [
@@ -24,43 +15,11 @@ const initialNaviationItems = [
   { title: "About us", href: "/learn_more" },
 ];
 
-function getNavigationItems(
-  status: ApplicationStatus | undefined,
-  role: Role | undefined,
-) {
-  const items = [...initialNaviationItems];
-
-  if (!status || status === "new") {
-    items[1] = { title: "Choose Role", href: "/choose-role" };
-  } else if (status === "application") {
-    items[1] = { title: "Finish application", href: `/application/${role}` };
-  } else if (status === "in_review") {
-    items[1] = { title: "Review screen", href: `/review/${role}` };
-  } else if (status === "accepted") {
-    items[1] = { title: "Dashboard", href: `/dashboard/${role}` };
-  } else if (status === "rejected") {
-    items[1] = { title: "Feedback", href: `/rejected/${role}` };
-  }
-
-  return items;
-}
-
 type HeaderProps = {
   className?: string;
 };
 
 export default async function Header({ className }: HeaderProps) {
-  const { userId, sessionClaims } = await auth();
-  let navigationItems;
-  console.log("userId:", userId);
-  if (!userId) {
-    navigationItems = initialNaviationItems;
-  } else {
-    const status = sessionClaims?.app_status;
-    const role = sessionClaims?.app_role;
-    console.log("Session claims - status:", status, "role:", role);
-    navigationItems = getNavigationItems(status, role);
-  }
 
   return (
     <header
@@ -86,7 +45,7 @@ export default async function Header({ className }: HeaderProps) {
           {/* Navigation */}
           <NavigationMenu>
             <NavigationMenuList>
-              {navigationItems.map((item) => (
+              {initialNaviationItems.map((item) => (
                 <NavigationMenuItem key={`${item.href}-${item.title}`}>
                   <NavigationMenuLink
                     className="w-32 truncate justify-center"
@@ -103,18 +62,6 @@ export default async function Header({ className }: HeaderProps) {
 
         {/* Right: Actions */}
         <div className="flex-1 flex justify-end gap-2">
-          {/* <SignedOut>
-            <SignInButton>
-              <Button variant="outline">Sign In</Button>
-            </SignInButton>
-            <SignUpButton>
-              <Button>Sign Up</Button>
-            </SignUpButton>
-          </SignedOut> */}
-          {/* Show the user button when the user is signed in */}
-          {/* <SignedIn>
-            <UserButton />
-          </SignedIn> */}
         </div>
       </div>
     </header>
