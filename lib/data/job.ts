@@ -1,13 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import type { JobRow } from "@/lib/types/job";
+import type { JobRow } from "@/lib/schema/job";
 
-/**
- * Fetch a single job by ID.
- * Uses server-side Supabase client for SSR support.
- *
- * @param id - The job ID to fetch
- * @returns The job data or null if not found
- */
 export async function getJobById(id: string): Promise<JobRow | null> {
   const supabase = await createClient();
 
@@ -22,4 +15,30 @@ export async function getJobById(id: string): Promise<JobRow | null> {
   }
 
   return data as JobRow;
+}
+
+export async function getActiveJobs(): Promise<JobRow[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .eq("status", "active")
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return [];
+  return data as JobRow[];
+}
+
+export async function getStartupJobs(startupId: string): Promise<JobRow[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .eq("startup_id", startupId)
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return [];
+  return data as JobRow[];
 }
