@@ -41,13 +41,20 @@ export async function middleware(request: NextRequest) {
   };
 
   // Onboarding-flow routing from the cached session (Edge-safe). When the
-  // cookie cache is unavailable we let the request through; the server-side
-  // session check enforces the flow authoritatively.
-  const cached = await getCookieCache<{
-    user: { appStatus?: string; appRole?: string };
-  }>(request);
-  const appStatus = cached?.user?.appStatus;
-  const appRole = cached?.user?.appRole;
+  // cookie cache is unavailable (disabled, expired, or no secret configured)
+  // we let the request through; the server-side session check enforces the
+  // flow authoritatively.
+  let appStatus: string | undefined;
+  let appRole: string | undefined;
+  try {
+    const cached = (await getCookieCache(request)) as {
+      user?: { appStatus?: string; appRole?: string };
+    } | null;
+    appStatus = cached?.user?.appStatus;
+    appRole = cached?.user?.appRole;
+  } catch {
+    return NextResponse.next();
+  }
 
   if (!appStatus) return NextResponse.next();
 
