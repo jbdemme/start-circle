@@ -83,6 +83,14 @@ export function WaitlistForm() {
                   required
                 />
               </Field>
+              <Field>
+                <FieldLabel>Referred by (optional)</FieldLabel>
+                <Input
+                  name="referrer"
+                  type="text"
+                  placeholder="Sam Altman"
+                />
+              </Field>
             </FieldGroup>
 
             <input type="hidden" name="role" value={role} />

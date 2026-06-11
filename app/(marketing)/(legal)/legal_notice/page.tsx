@@ -28,9 +28,9 @@ export default function LegalNoticePage() {
             Represented by the Board (Vorstand)
           </h2>
           <p className="text-sm">
-            President: Allegrah Muhr
+            President: Matheus Verweijen
             <br />
-            Vice President: Simon Fuhrbach
+            Vice President: Judith Leonhard
           </p>
         </div>
 
