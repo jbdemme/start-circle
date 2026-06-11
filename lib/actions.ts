@@ -14,6 +14,7 @@ export type ActionState = {
 const WaitlistSchema = z.object({
   email: z.string().email(),
   role: RoleSchema,
+  referrer: z.string().optional(),
 });
 
 export async function joinWaitlist(
@@ -23,6 +24,7 @@ export async function joinWaitlist(
   const payload = {
     email: formData.get("email"),
     role: formData.get("role"),
+    referrer: formData.get("referrer"),
   };
 
   const parsed = WaitlistSchema.safeParse(payload);
@@ -31,10 +33,7 @@ export async function joinWaitlist(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("waitlist").insert({
-    email: parsed.data.email,
-    role: parsed.data.role,
-  });
+  const { error } = await supabase.from("waitlist").insert(parsed.data);
 
   if (error) {
     if (error.code === "23505") {
